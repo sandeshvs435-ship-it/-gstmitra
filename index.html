@@ -1,545 +1,711 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="html-root">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>GSTMitra — GST Filing Made Simple</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--g:#1A6B3C;--gl:#E8F5EE;--gd:#0F4526;--acc:#F5A623;--ab:#FEF3DC;--text:#1C1C1E;--t2:#5C6370;--t3:#9CA3AF;--bg:#F7F9FC;--card:#fff;--bdr:#E5E9F0;--ok:#16A34A;--err:#DC2626;--info:#2563EB;--r:16px;--rs:10px}
+:root{
+  --g:#1A6B3C;--gl:#E8F5EE;--gd:#0A3D22;--g2:#2E8B57;
+  --acc:#F5A623;--ab:#FEF3DC;
+  --text:#0F1923;--t2:#4A5568;--t3:#9CA3AF;
+  --bg:#F0F4F1;--card:#fff;--bdr:#E2EAE5;
+  --ok:#16A34A;--err:#DC2626;--info:#2563EB;
+  --r:18px;--rs:12px;
+  --shadow:0 4px 24px rgba(26,107,60,0.08);
+  --shadow-lg:0 8px 40px rgba(26,107,60,0.14);
+}
 html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-h1,h2,h3,h4{font-family:'Sora',sans-serif}
-nav{background:var(--g);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
-.logo{color:#fff;font-family:'Sora',sans-serif;font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
-.logo-b{background:var(--acc);border-radius:8px;padding:4px 7px;font-size:15px}
-.live-tag{background:rgba(255,255,255,0.15);color:#fff;font-size:10px;padding:3px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;gap:5px}
-.live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:blink 1.5s infinite}
+h1,h2,h3,h4{font-family:'Sora',sans-serif;line-height:1.2}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes tick{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+@keyframes mup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(26,107,60,0.3)}50%{box-shadow:0 0 40px rgba(26,107,60,0.5)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes ripple{0%{transform:scale(0);opacity:.6}100%{transform:scale(4);opacity:0}}
+
+/* LANGUAGE SELECTOR */
+.lang-bar{background:var(--gd);padding:6px 16px;display:flex;align-items:center;gap:8px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.08)}
+.lang-btn{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.12);padding:4px 12px;border-radius:20px;font-size:12px;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;transition:all .2s;flex-shrink:0}
+.lang-btn.on{background:var(--acc);color:#1C1C1E;border-color:var(--acc);font-weight:700}
+.lang-btn:hover{background:rgba(255,255,255,0.15)}
+
+/* NAV */
+nav{background:rgba(10,61,34,0.97);backdrop-filter:blur(20px);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07)}
+.logo{color:#fff;font-family:'Sora',sans-serif;font-size:20px;font-weight:800;display:flex;align-items:center;gap:10px}
+.logo-icon{background:linear-gradient(135deg,var(--acc),#e8941a);border-radius:10px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;animation:glow 3s ease-in-out infinite}
+.live-badge{display:flex;align-items:center;gap:5px;background:rgba(22,163,74,0.2);color:#4ade80;border:1px solid rgba(74,222,128,0.25);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:blink 1.5s infinite}
+
+/* PAGES */
 .page{display:none;padding-bottom:82px;min-height:100vh}
-.page.active{display:block;animation:fadeUp .25s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.bnav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid var(--bdr);display:flex;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,0.07)}
-.bi{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 4px 7px;cursor:pointer;color:var(--t3);border:none;background:none;font-family:'DM Sans',sans-serif;transition:color .2s;position:relative}
+.page.active{display:block;animation:fadeUp .3s ease}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.97);backdrop-filter:blur(20px);border-top:1px solid var(--bdr);display:flex;z-index:100;box-shadow:0 -4px 24px rgba(0,0,0,0.07)}
+.bi{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 4px 7px;cursor:pointer;color:var(--t3);border:none;background:none;font-family:'DM Sans',sans-serif;transition:all .2s;position:relative}
 .bi.on{color:var(--g)}
-.bi.on::after{content:'';position:absolute;top:0;left:20%;right:20%;height:3px;background:var(--g);border-radius:0 0 3px 3px}
-.bi-ic{font-size:22px;margin-bottom:2px}
-.bi-lb{font-size:10px;font-weight:500}
-.hero{background:linear-gradient(135deg,var(--gd),var(--g));color:#fff;padding:28px 16px 32px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-20px;right:-20px;width:160px;height:160px;background:rgba(255,255,255,0.04);border-radius:50%}
-.hero-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(245,166,35,0.2);color:var(--acc);border:1px solid rgba(245,166,35,0.3);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;margin-bottom:16px}
-.hero h1{font-size:28px;line-height:1.2;margin-bottom:10px}
-.hero h1 span{color:var(--acc)}
-.hero p{font-size:14px;opacity:.85;line-height:1.6;margin-bottom:22px}
-.hero-btns{display:flex;gap:10px;flex-wrap:wrap}
-.btn{padding:12px 22px;border-radius:25px;border:none;cursor:pointer;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;transition:all .18s;display:inline-flex;align-items:center;gap:7px}
-.btn-acc{background:var(--acc);color:#1C1C1E;box-shadow:0 2px 8px rgba(245,166,35,0.3)}
-.btn-out{background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.4)}
-.btn-g{background:var(--g);color:#fff;box-shadow:0 2px 8px rgba(26,107,60,0.2)}
-.btn-g:hover{background:var(--gd)}
-.btn-block{width:100%;justify-content:center;padding:14px;font-size:15px;border-radius:12px}
-.btn-ghost{background:none;border:2px solid var(--bdr);color:var(--text);border-radius:12px}
-.btn-blue{background:linear-gradient(135deg,#1e40af,#2563eb);color:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(37,99,235,0.3)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-bottom:1px solid var(--bdr)}
-.stat{text-align:center;padding:14px 6px;border-right:1px solid var(--bdr)}
-.stat:last-child{border-right:none}
-.stat-n{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--g)}
-.stat-l{font-size:11px;color:var(--t2);margin-top:2px}
-.sec{padding:16px}
-.sec-h{font-size:17px;font-weight:700;margin-bottom:14px}
-.card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.bi.on .bi-ic{transform:scale(1.1)}
+.bi.on::after{content:'';position:absolute;top:0;left:20%;right:20%;height:3px;background:linear-gradient(90deg,var(--g),var(--g2));border-radius:0 0 4px 4px}
+.bi-ic{font-size:22px;margin-bottom:2px;transition:transform .2s}
+.bi-lb{font-size:10px;font-weight:600}
+
+/* HERO */
+.hero{background:linear-gradient(160deg,var(--gd) 0%,var(--g) 55%,#1e7a45 100%);color:#fff;padding:32px 16px 44px;position:relative;overflow:hidden}
+.hero-circles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hc1{position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.04);animation:float 6s ease-in-out infinite}
+.hc2{position:absolute;bottom:-50px;left:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.03);animation:float 8s ease-in-out infinite reverse}
+.hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.05) 1px,transparent 1px);background-size:22px 22px}
+.hero-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(245,166,35,0.15);color:var(--acc);border:1px solid rgba(245,166,35,0.25);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:16px;letter-spacing:.5px}
+.hero h1{font-size:30px;font-weight:800;margin-bottom:10px;letter-spacing:-.5px;animation:fadeUp .5s ease}
+.hero h1 .acc{color:var(--acc)}
+.hero p{font-size:14px;opacity:.8;line-height:1.7;margin-bottom:22px;animation:fadeUp .5s .1s ease both}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;animation:fadeUp .5s .2s ease both}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:26px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.1);animation:fadeUp .5s .3s ease both}
+.hstat-n{font-family:'Sora',sans-serif;font-size:24px;font-weight:800}
+.hstat-l{font-size:11px;opacity:.6;margin-top:2px;font-weight:500}
+
+/* BUTTONS */
+.btn{padding:13px 22px;border-radius:25px;border:none;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:7px;position:relative;overflow:hidden}
+.btn:active{transform:scale(0.97)}
+.btn-acc{background:linear-gradient(135deg,var(--acc),#e8941a);color:#1C1C1E;box-shadow:0 4px 16px rgba(245,166,35,0.3)}
+.btn-out{background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.3)}
+.btn-g{background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;box-shadow:0 4px 16px rgba(26,107,60,0.25)}
+.btn-g:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,107,60,0.3)}
+.btn-block{width:100%;justify-content:center;padding:15px;font-size:15px;border-radius:14px}
+.btn-ghost{background:#fff;border:1.5px solid var(--bdr);color:var(--text);border-radius:14px}
+.btn-blue{background:linear-gradient(135deg,#1e40af,#2563eb);color:#fff;border-radius:14px;box-shadow:0 4px 16px rgba(37,99,235,0.25)}
+.ripple-span{position:absolute;border-radius:50%;background:rgba(255,255,255,0.35);transform:scale(0);animation:ripple .6s linear;pointer-events:none}
+
+/* TICKER */
+.ticker{background:var(--ab);border-bottom:1px solid rgba(245,166,35,0.2);padding:8px 0;font-size:12px;color:#92400e;white-space:nowrap;overflow:hidden}
+.tick-in{display:inline-block;animation:tick 40s linear infinite;padding-left:100%}
+
+/* SECTION */
+.sec{padding:18px 16px}
+.sec-h{font-size:17px;font-weight:700;margin-bottom:14px;letter-spacing:-.3px}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);transition:box-shadow .2s}
 .card+.card{margin-top:12px}
+
+/* FEATURE GRID */
+.fgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.fcard{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.fcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g),var(--g2));transform:scaleX(0);transition:transform .25s;transform-origin:left}
+.fcard:hover::before{transform:scaleX(1)}
+.fcard:hover{border-color:var(--g);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.fic{width:44px;height:44px;border-radius:14px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;transition:transform .2s}
+.fcard:hover .fic{transform:scale(1.1) rotate(-5deg)}
+.fcard h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.fcard p{font-size:11px;color:var(--t2);line-height:1.5}
+
+/* ALERT */
 .alert{padding:12px 14px;border-radius:var(--rs);margin-bottom:14px;font-size:13px;display:flex;align-items:flex-start;gap:10px;line-height:1.5}
-.a-ok{background:#F0FDF4;border-left:3px solid var(--ok);color:#15803d}
-.a-info{background:#EFF6FF;border-left:3px solid var(--info);color:#1e40af}
-.a-warn{background:var(--ab);border-left:3px solid var(--acc);color:#92400e}
+.a-ok{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border-left:3px solid var(--ok);color:#15803d}
+.a-info{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-left:3px solid var(--info);color:#1e40af}
+.a-warn{background:linear-gradient(135deg,var(--ab),#fef9c3);border-left:3px solid var(--acc);color:#92400e}
+
+/* FORM */
 .fg{margin-bottom:14px}
-.fl{display:block;font-size:13px;font-weight:600;color:var(--t2);margin-bottom:6px}
-.fi{width:100%;padding:13px 14px;border:2px solid var(--bdr);border-radius:var(--rs);font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text);background:#fff;transition:border-color .2s}
-.fi:focus{outline:none;border-color:var(--g)}
+.fl{display:block;font-size:12px;font-weight:700;color:var(--t2);margin-bottom:6px;letter-spacing:.3px;text-transform:uppercase}
+.fi{width:100%;padding:13px 15px;border:2px solid var(--bdr);border-radius:var(--rs);font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text);background:#fff;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,0.03)}
+.fi:focus{outline:none;border-color:var(--g);box-shadow:0 0 0 4px rgba(26,107,60,0.1)}
 .fi.err{border-color:var(--err)}
 .fi-hint{font-size:11px;color:var(--t3);margin-top:4px}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.fsel{width:100%;padding:13px 14px;border:2px solid var(--bdr);border-radius:var(--rs);font-size:14px;font-family:'DM Sans',sans-serif;background:#fff;appearance:none;cursor:pointer;transition:border-color .2s}
-.fsel:focus{outline:none;border-color:var(--g)}
+.fsel{width:100%;padding:13px 15px;border:2px solid var(--bdr);border-radius:var(--rs);font-size:14px;font-family:'DM Sans',sans-serif;background:#fff;appearance:none;cursor:pointer;transition:all .2s}
+.fsel:focus{outline:none;border-color:var(--g);box-shadow:0 0 0 4px rgba(26,107,60,0.1)}
+
+/* STEPS */
 .steps{display:flex;align-items:center;margin-bottom:20px;overflow-x:auto;padding-bottom:4px}
-.sw-wrap{display:flex;flex-direction:column;align-items:center;min-width:44px}
+.sw-w{display:flex;flex-direction:column;align-items:center;min-width:44px}
 .sc{width:30px;height:30px;border-radius:50%;border:2px solid var(--bdr);background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--t3);flex-shrink:0;transition:all .3s}
-.sc.on{background:var(--g);border-color:var(--g);color:#fff;box-shadow:0 2px 8px rgba(26,107,60,0.3)}
-.sc.done{background:var(--ok);border-color:var(--ok);color:#fff}
-.sl{flex:1;height:2px;background:var(--bdr);margin:0 2px 16px;transition:background .3s;min-width:12px}
-.sl.done{background:var(--ok)}
-.step-lbl{font-size:9px;color:var(--t3);margin-top:3px;text-align:center;white-space:nowrap}
+.sc.on{background:linear-gradient(135deg,var(--g),var(--g2));border-color:var(--g);color:#fff;box-shadow:0 4px 12px rgba(26,107,60,0.3)}
+.sc.done{background:linear-gradient(135deg,var(--ok),#22c55e);border-color:var(--ok);color:#fff}
+.sl{flex:1;height:2px;background:var(--bdr);margin:0 2px 16px;transition:background .3s;min-width:12px;border-radius:1px}
+.sl.done{background:linear-gradient(90deg,var(--ok),var(--g))}
+.step-lbl{font-size:9px;color:var(--t3);margin-top:3px;text-align:center;white-space:nowrap;font-weight:600}
+
+/* PROGRESS */
 .pbar{height:6px;background:var(--bdr);border-radius:3px;margin-bottom:20px;overflow:hidden}
-.pfill{height:100%;background:linear-gradient(90deg,var(--g),#2E8B57);border-radius:3px;transition:width .4s ease}
-.calc{background:var(--gl);border:1px solid rgba(26,107,60,0.15);border-radius:var(--r);padding:14px}
+.pfill{height:100%;background:linear-gradient(90deg,var(--g),var(--g2),#4ade80);background-size:200%;border-radius:3px;transition:width .5s ease;animation:shimmer 2s linear infinite}
+
+/* CALC */
+.calc{background:linear-gradient(135deg,#E8F5EE,#d1fae5);border:1px solid rgba(26,107,60,0.15);border-radius:var(--r);padding:16px}
 .crow{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(26,107,60,0.08);font-size:13px}
-.crow:last-child{border-bottom:none;font-weight:700;font-size:16px;color:var(--g)}
+.crow:last-child{border-bottom:none;font-weight:700;font-size:17px;color:var(--g)}
 .clbl{color:var(--t2)}
-.tag{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
+
+/* TAG */
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
 .t-ok{background:#DCFCE7;color:#15803d}
 .t-warn{background:var(--ab);color:#92400e}
 .t-err{background:#FEE2E2;color:#991b1b}
 .t-info{background:#DBEAFE;color:#1e40af}
-.rchip{padding:7px 14px;border-radius:20px;border:2px solid var(--bdr);background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:var(--t2);transition:all .2s}
-.rchip.on{background:var(--g);border-color:var(--g);color:#fff}
+
+/* RCHIP */
+.rchip{padding:8px 14px;border-radius:20px;border:2px solid var(--bdr);background:#fff;cursor:pointer;font-size:13px;font-weight:700;color:var(--t2);transition:all .2s}
+.rchip.on{background:linear-gradient(135deg,var(--g),var(--g2));border-color:var(--g);color:#fff;transform:scale(1.05)}
+
+/* TABLE */
 .tbl{width:100%;border-collapse:collapse;font-size:13px}
-.tbl th{background:var(--gl);color:var(--g);font-weight:600;padding:10px 12px;text-align:left}
-.tbl td{padding:10px 12px;border-bottom:1px solid var(--bdr)}
+.tbl th{background:var(--gl);color:var(--g);font-weight:700;padding:10px 12px;text-align:left;font-size:12px}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--bdr);transition:background .2s}
+.tbl tr:hover td{background:#F8FBF9}
 .tbl tr:last-child td{border-bottom:none}
-.sw-toggle{position:relative;display:inline-block;width:50px;height:27px}
-.sw-toggle input{opacity:0;width:0;height:0}
+
+/* SWITCH */
+.sw-t{position:relative;display:inline-block;width:50px;height:27px}
+.sw-t input{opacity:0;width:0;height:0}
 .sw-sl{position:absolute;cursor:pointer;inset:0;background:var(--bdr);border-radius:14px;transition:.3s}
-.sw-sl:before{position:absolute;content:'';height:21px;width:21px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,0.15)}
-input:checked+.sw-sl{background:var(--g)}
+.sw-sl:before{position:absolute;content:'';height:21px;width:21px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 2px 4px rgba(0,0,0,0.2)}
+input:checked+.sw-sl{background:linear-gradient(135deg,var(--g),var(--g2))}
 input:checked+.sw-sl:before{transform:translateX(23px)}
-.fcard{background:var(--card);border:2px solid var(--bdr);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .2s;margin-bottom:10px}
-.fcard:hover,.fcard:active{border-color:var(--g);background:var(--gl)}
-.fic{width:42px;height:42px;border-radius:12px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px}
-.fgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.fgrid .fcard{margin-bottom:0}
-.fgrid .fcard h4{font-size:13px;font-weight:600;margin-bottom:4px}
-.fgrid .fcard p{font-size:11px;color:var(--t2);line-height:1.4}
+
 /* GOVT BOX */
-.govt-box{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:2px solid #2563eb;border-radius:var(--r);padding:18px;margin-bottom:14px}
-.govt-box h3{color:#1e40af;font-size:17px;margin-bottom:8px}
-.govt-box p{color:#1e40af;font-size:13px;line-height:1.5;margin-bottom:14px}
-.govt-amount{font-size:36px;font-weight:700;font-family:'Sora',sans-serif;color:#1e40af;margin-bottom:16px}
-.gstep{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.75);border-radius:var(--rs);padding:10px 12px;margin-bottom:8px}
-.gstep-num{width:26px;height:26px;border-radius:50%;background:#2563eb;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.gstep-text{font-size:13px;color:#1e40af;line-height:1.5}
-.pay-status{display:flex;align-items:center;gap:8px;padding:12px 14px;border-radius:var(--rs);font-size:13px;font-weight:600;margin-bottom:14px}
-.ps-pending{background:#FEF3DC;color:#92400e}
-.ps-done{background:#F0FDF4;color:#15803d}
-.confirm-row{display:flex;align-items:center;justify-content:space-between;background:var(--gl);border:2px solid rgba(26,107,60,0.2);border-radius:var(--rs);padding:12px 14px}
+.govt-box{background:linear-gradient(160deg,#EFF6FF,#DBEAFE);border:2px solid rgba(37,99,235,0.2);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.govt-box h3{color:#1e40af;font-size:16px;margin-bottom:8px;font-weight:700}
+.govt-box p{color:#1e40af;font-size:13px;line-height:1.6;margin-bottom:14px;opacity:.85}
+.govt-amount{font-size:38px;font-weight:800;font-family:'Sora',sans-serif;color:#1e40af;letter-spacing:-1px;margin-bottom:4px}
+.gstep{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.75);border-radius:var(--rs);padding:10px 12px;margin-bottom:8px;border:1px solid rgba(37,99,235,0.1);transition:all .2s}
+.gstep:hover{transform:translateX(4px);background:rgba(255,255,255,0.95)}
+.gstep-n{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#1e40af,#2563eb);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gstep-t{font-size:13px;color:#1e40af;line-height:1.5}
+
+/* PAYMENT */
 .popts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.popt{border:2px solid var(--bdr);border-radius:var(--rs);padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s}
-.popt.on{border-color:var(--g);background:var(--gl)}
-.popt-ic{font-size:24px;margin-bottom:4px}
-.popt-lb{font-size:11px;font-weight:600;color:var(--t2)}
-.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.success-ic{width:80px;height:80px;background:var(--gl);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;margin:0 auto 20px;box-shadow:0 4px 20px rgba(26,107,60,0.15)}
-.ticker{background:var(--ab);border-bottom:1px solid rgba(245,166,35,0.2);padding:8px 16px;font-size:12px;color:#92400e;white-space:nowrap;overflow:hidden}
-.tick-in{display:inline-block;animation:tick 35s linear infinite}
-@keyframes tick{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;display:flex;align-items:flex-end}
-.modal{background:#fff;border-radius:22px 22px 0 0;padding:22px 18px 30px;width:100%;max-height:88vh;overflow-y:auto;animation:mup .28s ease}
-@keyframes mup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.popt{border:2px solid var(--bdr);border-radius:var(--rs);padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s;background:#fff}
+.popt.on{border-color:var(--g);background:var(--gl);transform:scale(1.03)}
+.popt-ic{font-size:26px;margin-bottom:4px}
+.popt-lb{font-size:11px;font-weight:700;color:var(--t2)}
+
+/* CONFIRM ROW */
+.cr{display:flex;align-items:center;justify-content:space-between;background:var(--gl);border:2px solid rgba(26,107,60,0.15);border-radius:var(--rs);padding:13px 15px}
+
+/* SPINNER */
+.sp{display:inline-block;width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
+
+/* SUCCESS */
+.suc-ic{width:84px;height:84px;background:linear-gradient(135deg,var(--gl),#d1fae5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;margin:0 auto 18px;box-shadow:0 8px 32px rgba(26,107,60,0.2);animation:pulse 2s ease-in-out infinite}
+
+/* PAY STATUS */
+.ps-p{background:var(--ab);border:1.5px solid rgba(245,166,35,0.3);border-radius:var(--rs);padding:11px 14px;font-size:13px;font-weight:600;color:#92400e;display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.ps-d{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border:1.5px solid rgba(22,163,74,0.3);border-radius:var(--rs);padding:11px 14px;font-size:13px;font-weight:600;color:#15803d;display:flex;align-items:center;gap:8px;margin-bottom:14px}
+
+/* HOW IT WORKS */
+.hiw{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--bdr)}
+.hiw:last-child{border-bottom:none}
+.hiw-n{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;font-size:16px;flex-shrink:0;transition:transform .2s}
+.hiw:hover .hiw-n{transform:rotate(-5deg) scale(1.1)}
+
+/* LEARN */
+.lcard{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);padding:15px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;transition:all .25s;box-shadow:0 2px 8px rgba(0,0,0,0.03)}
+.lcard:hover{border-color:var(--g);transform:translateX(6px);box-shadow:var(--shadow)}
+.lcard-ic{font-size:26px;transition:transform .2s}
+.lcard:hover .lcard-ic{transform:scale(1.2) rotate(-10deg)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;display:flex;align-items:flex-end;backdrop-filter:blur(4px)}
+.modal{background:#fff;border-radius:24px 24px 0 0;padding:22px 18px 32px;width:100%;max-height:88vh;overflow-y:auto;animation:mup .3s ease}
 .mhandle{width:40px;height:4px;background:var(--bdr);border-radius:2px;margin:0 auto 18px}
-.fab{position:fixed;bottom:90px;right:16px;background:var(--g);color:#fff;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 4px 16px rgba(26,107,60,0.4);z-index:150;border:none;transition:transform .2s}
+
+/* FAB */
+.fab{position:fixed;bottom:92px;right:16px;background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 4px 20px rgba(26,107,60,0.4);z-index:150;border:none;transition:all .2s;animation:float 4s ease-in-out infinite}
 .fab:hover{transform:scale(1.1)}
-.gverified{background:var(--gl);border:2px solid rgba(26,107,60,0.2);border-radius:var(--rs);padding:12px;margin-top:10px;display:none}
-.gstin-seg{background:var(--gl);border-radius:8px;padding:8px;text-align:center;font-size:10px;color:var(--t2)}
-.gstin-seg strong{display:block;font-size:13px;color:var(--g);font-weight:700}
-.hiw-row{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--bdr)}
-.hiw-row:last-child{border-bottom:none}
-.hiw-num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:700;font-size:16px;flex-shrink:0}
-.lcard{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;transition:all .2s}
-.lcard:hover{border-color:var(--g);transform:translateX(3px)}
+
+/* GSTIN VERIFIED */
+.gverified{background:linear-gradient(135deg,var(--gl),#d1fae5);border:2px solid rgba(26,107,60,0.2);border-radius:var(--rs);padding:13px;margin-top:12px;display:none;animation:fadeUp .3s ease}
+
+/* GSTIN SEGS */
+.gstin-seg{background:var(--gl);border-radius:10px;padding:9px 6px;text-align:center;font-size:10px;color:var(--t2);font-weight:600;transition:all .2s;cursor:default}
+.gstin-seg:hover{background:var(--g);color:#fff}
+.gstin-seg strong{display:block;font-size:12px;color:var(--g);font-family:'Sora',sans-serif;font-weight:700}
+.gstin-seg:hover strong{color:#fff}
+
+/* VOICE HELP BTN */
+.voice-btn{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:25px;padding:10px 18px;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .2s;box-shadow:0 4px 14px rgba(124,58,237,0.3)}
+.voice-btn:hover{transform:translateY(-2px)}
+
+/* EASY MODE BOX */
+.easy-box{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border:2px solid rgba(124,58,237,0.2);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.easy-box h3{color:#5b21b6;font-size:15px;margin-bottom:8px}
+
+/* HELP CARD */
+.help-card{background:linear-gradient(135deg,var(--gl),#d1fae5);border:1.5px solid rgba(26,107,60,0.2);border-radius:var(--rs);padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s}
+.help-card:hover{transform:translateX(4px);box-shadow:var(--shadow)}
+
+/* PRICE CARD */
+.price-card{border-radius:var(--r);padding:22px;text-align:center;transition:all .25s}
+.price-card:hover{transform:translateY(-4px)}
+
+/* GSTIN HELPER */
+.gstin-hint{background:linear-gradient(135deg,var(--ab),#fef9c3);border:1.5px solid rgba(245,166,35,0.2);border-radius:var(--rs);padding:12px;margin-bottom:14px}
 </style>
 </head>
 <body>
 
+<!-- LANGUAGE BAR -->
+<div class="lang-bar" id="lang-bar">
+  <span style="color:rgba(255,255,255,0.5);font-size:11px;flex-shrink:0">🌐 Language:</span>
+  <button class="lang-btn on" onclick="setLang('en')">English</button>
+  <button class="lang-btn" onclick="setLang('hi')">हिंदी</button>
+  <button class="lang-btn" onclick="setLang('kn')">ಕನ್ನಡ</button>
+  <button class="lang-btn" onclick="setLang('ta')">தமிழ்</button>
+  <button class="lang-btn" onclick="setLang('te')">తెలుగు</button>
+  <button class="lang-btn" onclick="setLang('mr')">मराठी</button>
+  <button class="lang-btn" onclick="setLang('gu')">ગુજરાતી</button>
+  <button class="lang-btn" onclick="setLang('bn')">বাংলা</button>
+  <button class="lang-btn" onclick="setLang('pa')">ਪੰਜਾਬੀ</button>
+  <button class="lang-btn" onclick="setLang('ml')">മലയാളം</button>
+  <button class="lang-btn" onclick="setLang('or')">ଓଡ଼ିଆ</button>
+</div>
+
 <nav>
-  <div class="logo"><div class="logo-b">🧾</div>GSTMitra</div>
+  <div class="logo">
+    <div class="logo-icon">🧾</div>
+    GSTMitra
+  </div>
   <div style="display:flex;gap:8px;align-items:center">
-    <div class="live-tag"><span class="live-dot"></span>LIVE</div>
-    <div style="font-size:10px;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:10px">WhiteBooks GSP</div>
+    <div class="live-badge"><span class="live-dot"></span><span id="nav-live">LIVE</span></div>
   </div>
 </nav>
 
 <div class="ticker">
-  <span class="tick-in">🇮🇳 GSTMitra — India's simplest GST app &nbsp;|&nbsp; First filing FREE &nbsp;|&nbsp; Only ₹199 per filing &nbsp;|&nbsp; GSTR-1 due: 11th &nbsp;|&nbsp; GSTR-3B due: 20th &nbsp;|&nbsp; GST tax goes to Government directly &nbsp;|&nbsp; ₹199 service fee comes to GSTMitra &nbsp;|&nbsp; Powered by WhiteBooks GSP — GSTN Licensed</span>
+  <span class="tick-in" id="ticker-text">🇮🇳 GSTMitra — India's simplest GST filing app &nbsp;·&nbsp; First filing FREE &nbsp;·&nbsp; ₹199 per filing &nbsp;·&nbsp; GSTR-1 due 11th &nbsp;·&nbsp; GSTR-3B due 20th &nbsp;·&nbsp; GST tax → Government directly &nbsp;·&nbsp; ₹199 service fee → GSTMitra &nbsp;·&nbsp; No CA needed &nbsp;·&nbsp; File in 5 minutes &nbsp;·&nbsp; WhiteBooks GSP — GSTN Licensed</span>
 </div>
 
 <div class="bnav">
-  <button class="bi on" id="bn-home" onclick="showPage('home')"><span class="bi-ic">🏠</span><span class="bi-lb">Home</span></button>
-  <button class="bi" id="bn-calc" onclick="showPage('calc')"><span class="bi-ic">🔢</span><span class="bi-lb">Calculator</span></button>
-  <button class="bi" id="bn-file" onclick="showPage('file')"><span class="bi-ic">📄</span><span class="bi-lb">File GST</span></button>
-  <button class="bi" id="bn-track" onclick="showPage('track')"><span class="bi-ic">📊</span><span class="bi-lb">My Returns</span></button>
-  <button class="bi" id="bn-learn" onclick="showPage('learn')"><span class="bi-ic">📚</span><span class="bi-lb">Learn</span></button>
+  <button class="bi on" id="bn-home" onclick="showPage('home')"><span class="bi-ic">🏠</span><span class="bi-lb" data-t="home">Home</span></button>
+  <button class="bi" id="bn-calc" onclick="showPage('calc')"><span class="bi-ic">🔢</span><span class="bi-lb" data-t="calc">Calculator</span></button>
+  <button class="bi" id="bn-file" onclick="showPage('file')"><span class="bi-ic">📄</span><span class="bi-lb" data-t="file">File GST</span></button>
+  <button class="bi" id="bn-track" onclick="showPage('track')"><span class="bi-ic">📊</span><span class="bi-lb" data-t="track">My Returns</span></button>
+  <button class="bi" id="bn-learn" onclick="showPage('learn')"><span class="bi-ic">📚</span><span class="bi-lb" data-t="learn">Learn</span></button>
 </div>
 
-<button class="fab" onclick="openHelp()">💬</button>
+<button class="fab" onclick="showPage('learn')">💬</button>
 
-<!-- HOME -->
+<!-- ==================== HOME ==================== -->
 <div class="page active" id="page-home">
   <div class="hero">
-    <div class="hero-chip">🇮🇳 GSTN Licensed · WhiteBooks GSP</div>
-    <h1>File GST yourself.<br><span>Simple. Fast. ₹199 only.</span></h1>
-    <p>No CA needed. No confusing forms. File your GST return in 5 minutes — we guide you every step!</p>
-    <div class="hero-btns">
-      <button class="btn btn-acc" onclick="showPage('file')">🚀 Start Filing — FREE</button>
-      <button class="btn btn-out" onclick="showPage('calc')">🔢 Calculator</button>
+    <div class="hero-circles"><div class="hc1"></div><div class="hc2"></div><div class="hero-dots"></div></div>
+    <div style="position:relative;z-index:1">
+      <div class="hero-chip">🇮🇳 GSTN Licensed · WhiteBooks GSP</div>
+      <h1>File GST yourself.<br><span class="acc" data-t="heroAccent">Simple. Fast. ₹199 only.</span></h1>
+      <p data-t="heroDesc">No CA needed. No confusing forms. File your GST return in 5 minutes — we guide you every step of the way!</p>
+      <div class="hero-btns">
+        <button class="btn btn-acc" onclick="showPage('file')" data-t="startFiling">🚀 Start Filing — FREE</button>
+        <button class="btn btn-out" onclick="showPage('calc')" data-t="calculator">🔢 Calculator</button>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hstat-n">₹0</div><div class="hstat-l" data-t="firstFiling">First Filing</div></div>
+        <div><div class="hstat-n">₹199</div><div class="hstat-l" data-t="perFiling">Per Filing</div></div>
+        <div><div class="hstat-n">5 min</div><div class="hstat-l" data-t="avgTime">Avg. Time</div></div>
+      </div>
     </div>
   </div>
-  <div class="stats">
-    <div class="stat"><div class="stat-n">₹0</div><div class="stat-l">First Filing</div></div>
-    <div class="stat"><div class="stat-n">₹199</div><div class="stat-l">Per Filing</div></div>
-    <div class="stat"><div class="stat-n">5 min</div><div class="stat-l">Avg. Time</div></div>
-  </div>
-  <div class="sec">
-    <div class="alert a-ok" style="font-size:14px">🎉 <div><strong>First GST filing is 100% FREE!</strong> No credit card, no hidden charges.</div></div>
 
+  <div class="sec">
+    <!-- EASY MODE for small workers -->
+    <div class="easy-box">
+      <h3>👆 <span data-t="easyTitle">New to GST? Start here!</span></h3>
+      <p style="font-size:13px;color:#5b21b6;margin-bottom:12px" data-t="easyDesc">We made filing super simple. Just follow our step-by-step guide — like filling a simple form!</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="voice-btn" onclick="showPage('file')" style="font-size:12px;padding:10px 14px">
+          📋 <span data-t="guideMe">Guide Me Step by Step</span>
+        </button>
+        <button class="voice-btn" onclick="showHelp()" style="background:linear-gradient(135deg,#065f46,#047857);font-size:12px;padding:10px 14px">
+          📞 <span data-t="callHelp">Need Help? Call Us</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="alert a-ok" style="font-size:14px">🎉 <div><strong data-t="freeAlert">First GST filing is 100% FREE!</strong> <span data-t="freeAlertSub">No credit card. No hidden charges.</span></div></div>
+
+    <!-- HOW PAYMENTS WORK -->
     <div class="card" style="margin-bottom:14px;background:linear-gradient(135deg,#F0FDF4,#EFF6FF)">
-      <div style="font-weight:700;font-size:15px;margin-bottom:12px">💡 How payments work — very simple</div>
-      <div style="display:grid;gap:8px">
-        <div style="display:flex;align-items:center;gap:10px;background:#fff;padding:12px;border-radius:10px;border:1px solid var(--bdr)">
-          <span style="font-size:26px">🏛️</span>
-          <div><div style="font-weight:600;font-size:14px">GST Tax → <span style="color:#1e40af">Government</span></div><div style="font-size:12px;color:var(--t2)">e.g. ₹9,000 → paid directly on GST portal</div></div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:12px;font-family:'Sora',sans-serif" data-t="howPayWorks">💡 How payments work — very simple</div>
+      <div style="display:grid;gap:10px">
+        <div style="display:flex;align-items:center;gap:12px;background:#fff;padding:13px;border-radius:14px;border:1px solid var(--bdr)">
+          <div style="width:46px;height:46px;background:#EFF6FF;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🏛️</div>
+          <div><div style="font-weight:700;font-size:14px;margin-bottom:2px">GST Tax → <span style="color:#1e40af" data-t="govt">Government</span></div><div style="font-size:12px;color:var(--t2)" data-t="govtDesc">e.g. ₹9,000 → paid directly on GST portal</div></div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;background:#fff;padding:12px;border-radius:10px;border:1px solid var(--bdr)">
-          <span style="font-size:26px">💰</span>
-          <div><div style="font-weight:600;font-size:14px">Service Fee → <span style="color:var(--g)">GSTMitra</span></div><div style="font-size:12px;color:var(--t2)">₹199 → paid to us for filing your return</div></div>
+        <div style="display:flex;align-items:center;gap:12px;background:#fff;padding:13px;border-radius:14px;border:1px solid var(--bdr)">
+          <div style="width:46px;height:46px;background:var(--gl);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">💰</div>
+          <div><div style="font-weight:700;font-size:14px;margin-bottom:2px">₹199 → <span style="color:var(--g)" data-t="gstmitra">GSTMitra</span></div><div style="font-size:12px;color:var(--t2)" data-t="gstmitraDesc">Service fee for filing your return</div></div>
         </div>
       </div>
     </div>
 
-    <div class="sec-h">What you can do</div>
+    <div class="sec-h" data-t="whatYouCan">What you can do</div>
     <div class="fgrid">
-      <div class="fcard" onclick="showPage('file')"><div class="fic">📋</div><h4>File GSTR-1</h4><p>Sales return · Due 11th</p></div>
-      <div class="fcard" onclick="showPage('file')"><div class="fic">📊</div><h4>File GSTR-3B</h4><p>Summary + Pay tax · Due 20th</p></div>
-      <div class="fcard" onclick="showPage('calc')"><div class="fic">🔢</div><h4>GST Calculator</h4><p>Calculate any amount</p></div>
-      <div class="fcard" onclick="showPage('learn')"><div class="fic">📚</div><h4>Learn GST A-Z</h4><p>Simple guides</p></div>
-      <div class="fcard" onclick="showPage('track')"><div class="fic">📈</div><h4>My Returns</h4><p>Filing history</p></div>
-      <div class="fcard" onclick="showPage('file')"><div class="fic">🧾</div><h4>e-Invoice</h4><p>GST invoices</p></div>
+      <div class="fcard" onclick="showPage('file')"><div class="fic">📋</div><h4 data-t="gstr1">File GSTR-1</h4><p data-t="gstr1Desc">Sales return · Due 11th</p></div>
+      <div class="fcard" onclick="showPage('file')"><div class="fic">📊</div><h4 data-t="gstr3b">File GSTR-3B</h4><p data-t="gstr3bDesc">Summary + Tax · Due 20th</p></div>
+      <div class="fcard" onclick="showPage('calc')"><div class="fic">🔢</div><h4 data-t="gstCalc">GST Calculator</h4><p data-t="gstCalcDesc">Instant calculation</p></div>
+      <div class="fcard" onclick="showPage('learn')"><div class="fic">📚</div><h4 data-t="learnGst">Learn GST A-Z</h4><p data-t="learnGstDesc">Simple guides</p></div>
+      <div class="fcard" onclick="showPage('track')"><div class="fic">📈</div><h4 data-t="myReturns">My Returns</h4><p data-t="myReturnsDesc">Filing history</p></div>
+      <div class="fcard" onclick="showHelp()"><div class="fic">📞</div><h4 data-t="helpSupport">Help & Support</h4><p data-t="helpSupportDesc">WhatsApp / Call</p></div>
     </div>
   </div>
+
   <div class="sec">
-    <div class="sec-h">📋 How it works — 4 steps</div>
+    <div class="sec-h" data-t="howWorks">📋 How it works</div>
     <div class="card" style="padding:0 16px">
-      <div class="hiw-row"><div class="hiw-num" style="background:var(--gl);color:var(--g)">1</div><div><div style="font-weight:600;font-size:14px">Enter your GSTIN</div><div style="font-size:12px;color:var(--t2);margin-top:2px">Your 15-digit GST number. We verify it automatically.</div></div></div>
-      <div class="hiw-row"><div class="hiw-num" style="background:var(--gl);color:var(--g)">2</div><div><div style="font-weight:600;font-size:14px">Enter your sales details</div><div style="font-size:12px;color:var(--t2);margin-top:2px">How much you sold. We calculate the tax for you.</div></div></div>
-      <div class="hiw-row"><div class="hiw-num" style="background:#EFF6FF;color:#1e40af">3</div><div><div style="font-weight:600;font-size:14px;color:#1e40af">Pay GST tax to Government</div><div style="font-size:12px;color:var(--t2);margin-top:2px">We show the exact amount. You pay on GST portal.</div></div></div>
-      <div class="hiw-row"><div class="hiw-num" style="background:var(--ab);color:#92400e">4</div><div><div style="font-weight:600;font-size:14px;color:#92400e">Pay ₹199 & Get it Filed</div><div style="font-size:12px;color:var(--t2);margin-top:2px">We file your return. ARN number instantly.</div></div></div>
+      <div class="hiw"><div class="hiw-n" style="background:var(--gl);color:var(--g)">1</div><div><div style="font-weight:700;font-size:15px;margin-bottom:3px" data-t="step1Title">Enter your GSTIN</div><div style="font-size:13px;color:var(--t2);line-height:1.5" data-t="step1Desc">Your 15-digit GST number. We verify it instantly.</div></div></div>
+      <div class="hiw"><div class="hiw-n" style="background:var(--gl);color:var(--g)">2</div><div><div style="font-weight:700;font-size:15px;margin-bottom:3px" data-t="step2Title">Enter your sales</div><div style="font-size:13px;color:var(--t2);line-height:1.5" data-t="step2Desc">How much you sold. We calculate the tax automatically.</div></div></div>
+      <div class="hiw"><div class="hiw-n" style="background:#EFF6FF;color:#1e40af">3</div><div><div style="font-weight:700;font-size:15px;margin-bottom:3px;color:#1e40af" data-t="step3Title">Pay GST tax to Government</div><div style="font-size:13px;color:var(--t2);line-height:1.5" data-t="step3Desc">We show exact amount. You pay on GST portal.</div></div></div>
+      <div class="hiw"><div class="hiw-n" style="background:var(--ab);color:#92400e">4</div><div><div style="font-weight:700;font-size:15px;margin-bottom:3px;color:#92400e" data-t="step4Title">Pay ₹199 & Get Filed</div><div style="font-size:13px;color:var(--t2);line-height:1.5" data-t="step4Desc">We file your return. ARN number instantly.</div></div></div>
     </div>
   </div>
+
   <div class="sec">
-    <div class="sec-h">💰 Pricing</div>
-    <div class="card" style="border:2px solid var(--g);background:var(--gl);text-align:center;margin-bottom:12px">
-      <div style="font-size:11px;font-weight:700;background:var(--g);color:#fff;display:inline-block;padding:4px 12px;border-radius:10px;margin-bottom:10px">🎉 FIRST FILING — FREE</div>
-      <div style="font-size:44px;font-weight:700;font-family:'Sora',sans-serif;color:var(--g)">₹0</div>
-      <p style="font-size:13px;color:var(--t2);margin:6px 0 14px">Your very first GST return — no charge at all</p>
-      <button class="btn btn-g btn-block" onclick="showPage('file')">File for FREE →</button>
-    </div>
-    <div class="card" style="border:2px solid var(--acc);background:var(--ab);text-align:center">
-      <div style="font-size:11px;font-weight:700;background:var(--acc);color:#1C1C1E;display:inline-block;padding:4px 12px;border-radius:10px;margin-bottom:10px">AFTER FIRST FILING</div>
-      <div style="font-size:44px;font-weight:700;font-family:'Sora',sans-serif;color:#92400e">₹199<span style="font-size:16px;color:var(--t2)">/filing</span></div>
-      <p style="font-size:12px;color:var(--t2);margin:6px 0 4px">All return types · Unlimited invoices</p>
-      <p style="font-size:11px;color:var(--t3);margin-bottom:14px">GST tax paid separately to Government</p>
-      <button class="btn btn-acc btn-block" onclick="showPage('file')">Get Started →</button>
+    <div class="sec-h" data-t="pricing">💰 Pricing</div>
+    <div style="display:grid;gap:12px">
+      <div class="price-card" style="background:linear-gradient(160deg,var(--gd),var(--g));color:#fff">
+        <div style="font-size:11px;font-weight:700;background:var(--acc);color:#1C1C1E;display:inline-block;padding:5px 14px;border-radius:20px;margin-bottom:12px">🎉 <span data-t="firstFree">FIRST FILING — FREE</span></div>
+        <div style="font-size:50px;font-weight:800;font-family:'Sora',sans-serif;line-height:1">₹0</div>
+        <p style="font-size:13px;opacity:.7;margin:8px 0 16px" data-t="firstFreeDesc">Your very first GST return — completely free</p>
+        <button class="btn btn-acc btn-block" onclick="showPage('file')" data-t="fileForFree">File for FREE →</button>
+      </div>
+      <div class="price-card" style="background:linear-gradient(160deg,var(--ab),#fef9c3);border:2px solid rgba(245,166,35,0.3)">
+        <div style="font-size:11px;font-weight:700;background:var(--g);color:#fff;display:inline-block;padding:5px 14px;border-radius:20px;margin-bottom:12px" data-t="afterFirst">AFTER FIRST FILING</div>
+        <div style="font-size:50px;font-weight:800;font-family:'Sora',sans-serif;color:#92400e;line-height:1">₹199<span style="font-size:16px;color:var(--t2);font-weight:400" data-t="perFilingLabel">/filing</span></div>
+        <p style="font-size:12px;color:var(--t2);margin:8px 0 4px" data-t="paidDesc">All return types · Unlimited invoices</p>
+        <p style="font-size:11px;color:var(--t3);margin-bottom:16px" data-t="taxSeparate">GST tax paid separately to Government</p>
+        <button class="btn btn-g btn-block" onclick="showPage('file')" data-t="getStarted">Get Started →</button>
+      </div>
     </div>
   </div>
+
   <div class="sec">
-    <div class="sec-h">📅 GST Due Dates</div>
+    <div class="sec-h" data-t="dueDates">📅 GST Due Dates</div>
     <div class="card" style="padding:0">
       <table class="tbl" style="width:100%">
-        <thead><tr><th>Return</th><th>Who</th><th>Due</th></tr></thead>
+        <thead><tr><th data-t="return">Return</th><th data-t="who">Who</th><th data-t="due">Due</th></tr></thead>
         <tbody>
-          <tr><td><strong>GSTR-1</strong></td><td>All taxpayers</td><td><span class="tag t-warn">11th</span></td></tr>
-          <tr><td><strong>GSTR-3B</strong></td><td>All taxpayers</td><td><span class="tag t-err">20th</span></td></tr>
-          <tr><td><strong>GSTR-4</strong></td><td>Composition</td><td><span class="tag t-info">30 Apr</span></td></tr>
-          <tr><td><strong>GSTR-9</strong></td><td>Annual</td><td><span class="tag t-ok">31 Dec</span></td></tr>
+          <tr><td><strong>GSTR-1</strong></td><td data-t="allTax">All taxpayers</td><td><span class="tag t-warn">11th</span></td></tr>
+          <tr><td><strong>GSTR-3B</strong></td><td data-t="allTax">All taxpayers</td><td><span class="tag t-err">20th</span></td></tr>
+          <tr><td><strong>GSTR-4</strong></td><td data-t="composition">Composition</td><td><span class="tag t-info">30 Apr</span></td></tr>
+          <tr><td><strong>GSTR-9</strong></td><td data-t="annual">Annual</td><td><span class="tag t-ok">31 Dec</span></td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
 
-<!-- CALCULATOR -->
+<!-- ==================== CALCULATOR ==================== -->
 <div class="page" id="page-calc">
-  <div style="background:var(--g);padding:20px 16px 24px;color:#fff">
-    <h2 style="color:#fff;font-size:22px;margin-bottom:4px">GST Calculator</h2>
-    <p style="opacity:.8;font-size:13px">Enter any amount — instant GST breakdown</p>
+  <div style="background:linear-gradient(160deg,var(--gd),var(--g));padding:22px 16px 30px;color:#fff">
+    <h2 style="color:#fff;font-size:22px;margin-bottom:4px" data-t="calcTitle">GST Calculator</h2>
+    <p style="opacity:.75;font-size:13px" data-t="calcDesc">Instant calculation for any amount</p>
   </div>
   <div class="sec">
     <div class="card">
-      <div class="fg"><label class="fl">Enter Amount (₹)</label><input type="number" class="fi" id="c-amt" placeholder="e.g. 10000" oninput="calcGST()" style="font-size:24px;font-weight:700;text-align:center"><div class="fi-hint">Enter the amount you want to calculate GST on</div></div>
-      <div class="fg"><label class="fl">GST Rate — tap to select</label><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="rchip" onclick="setR(0,this)">0%</button><button class="rchip" onclick="setR(3,this)">3%</button><button class="rchip" onclick="setR(5,this)">5%</button><button class="rchip" onclick="setR(12,this)">12%</button><button class="rchip on" onclick="setR(18,this)">18%</button><button class="rchip" onclick="setR(28,this)">28%</button></div></div>
-      <div class="fg"><label class="fl">Type</label><select class="fsel" id="c-type" onchange="calcGST()"><option value="ex">Add GST on top of my price</option><option value="in">GST already included in the price</option></select></div>
+      <div class="fg"><label class="fl" data-t="amountLabel">Amount (₹)</label><input type="number" class="fi" id="c-amt" placeholder="e.g. 10000" oninput="calcGST()" style="font-size:26px;font-weight:700;text-align:center"><div class="fi-hint" data-t="amountHint">Enter the amount you want to calculate GST on</div></div>
+      <div class="fg"><label class="fl" data-t="gstRateLabel">GST Rate — tap to select</label><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="rchip" onclick="setR(0,this)">0%</button><button class="rchip" onclick="setR(3,this)">3%</button><button class="rchip" onclick="setR(5,this)">5%</button><button class="rchip" onclick="setR(12,this)">12%</button><button class="rchip on" onclick="setR(18,this)">18%</button><button class="rchip" onclick="setR(28,this)">28%</button></div></div>
+      <div class="fg"><label class="fl" data-t="calcType">Type</label><select class="fsel" id="c-type" onchange="calcGST()"><option value="ex" data-t="addGst">Add GST on top of my price</option><option value="in" data-t="removeGst">GST already included in price</option></select></div>
     </div>
     <div class="calc" style="margin-top:14px">
-      <div style="font-weight:700;font-size:14px;color:var(--g);margin-bottom:12px">📊 GST Breakdown</div>
-      <div class="crow"><span class="clbl">Base Amount</span><span id="r-base" style="font-weight:600">₹0.00</span></div>
+      <div style="font-weight:700;font-size:14px;color:var(--g);margin-bottom:12px;font-family:'Sora',sans-serif" data-t="breakdown">📊 GST Breakdown</div>
+      <div class="crow"><span class="clbl" data-t="baseAmt">Base Amount</span><span id="r-base" style="font-weight:600">₹0.00</span></div>
       <div class="crow"><span class="clbl">CGST (<span id="r-cr">9</span>%)</span><span id="r-cgst">₹0.00</span></div>
       <div class="crow"><span class="clbl">SGST (<span id="r-sr">9</span>%)</span><span id="r-sgst">₹0.00</span></div>
       <div class="crow"><span class="clbl">IGST (<span id="r-ir">18</span>%)</span><span id="r-igst">₹0.00</span></div>
-      <div class="crow"><span>💰 Total Amount</span><span id="r-total" style="font-size:22px">₹0.00</span></div>
+      <div class="crow"><span data-t="totalAmt">💰 Total Amount</span><span id="r-total" style="font-size:24px;letter-spacing:-1px">₹0.00</span></div>
     </div>
     <div class="card" style="margin-top:14px">
-      <div style="font-weight:700;font-size:14px;margin-bottom:12px">Which rate for what?</div>
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px;font-family:'Sora',sans-serif" data-t="rateGuide">Which rate applies to what?</div>
       <div style="display:grid;gap:8px;font-size:12px">
-        <div style="display:flex;gap:8px;align-items:flex-start"><span class="tag t-ok" style="flex-shrink:0">0%</span><span style="color:var(--t2)">Rice, wheat, milk, eggs, vegetables, books</span></div>
-        <div style="display:flex;gap:8px;align-items:flex-start"><span class="tag t-info" style="flex-shrink:0">5%</span><span style="color:var(--t2)">Packed food, footwear &lt;₹1000, economy flights</span></div>
-        <div style="display:flex;gap:8px;align-items:flex-start"><span class="tag t-warn" style="flex-shrink:0">12%</span><span style="color:var(--t2)">Processed food, business class travel</span></div>
-        <div style="display:flex;gap:8px;align-items:flex-start"><span class="tag t-err" style="flex-shrink:0">18%</span><span style="color:var(--t2)">Most services, restaurants, hotels, electronics</span></div>
-        <div style="display:flex;gap:8px;align-items:flex-start"><span style="background:#F3E8FF;color:#7c3aed;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;flex-shrink:0">28%</span><span style="color:var(--t2)">Luxury cars, tobacco, aerated drinks</span></div>
+        <div style="display:flex;gap:8px;align-items:flex-start"><span class="tag t-ok" style="flex-shrink:0">0%</span><span style="color:var(--t2)" data-t="rate0">Rice, wheat, milk, eggs, vegetables, books, newspapers</span></div>
+        <div style="display:flex;gap:8px;align-items:flex-start"><span class="tag t-info" style="flex-shrink:0">5%</span><span style="color:var(--t2)" data-t="rate5">Packed food, footwear below ₹1000, economy flights</span></div>
+        <div style="display:flex;gap:8px;align-items:flex-start"><span class="tag t-warn" style="flex-shrink:0">12%</span><span style="color:var(--t2)" data-t="rate12">Processed food, business class travel</span></div>
+        <div style="display:flex;gap:8px;align-items:flex-start"><span class="tag t-err" style="flex-shrink:0">18%</span><span style="color:var(--t2)" data-t="rate18">Most services, restaurants, hotels, electronics</span></div>
+        <div style="display:flex;gap:8px;align-items:flex-start"><span style="background:#F3E8FF;color:#7c3aed;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0">28%</span><span style="color:var(--t2)" data-t="rate28">Luxury cars, tobacco, aerated drinks</span></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- FILE GST -->
+<!-- ==================== FILE GST ==================== -->
 <div class="page" id="page-file">
-  <div style="background:var(--g);padding:20px 16px 24px;color:#fff">
-    <h2 style="color:#fff;font-size:22px;margin-bottom:4px">File GST Return</h2>
-    <p style="opacity:.8;font-size:13px">Follow the steps — we guide you every step of the way</p>
+  <div style="background:linear-gradient(160deg,var(--gd),var(--g));padding:22px 16px 30px;color:#fff">
+    <h2 style="color:#fff;font-size:22px;margin-bottom:4px" data-t="fileTitle">File GST Return</h2>
+    <p style="opacity:.75;font-size:13px" data-t="fileDesc">Follow the steps — we guide you every step</p>
   </div>
   <div class="sec">
-    <div class="alert a-ok" id="free-msg" style="font-size:14px">🎉 <div><strong>First filing FREE!</strong> No payment from you today.</div></div>
+    <div class="alert a-ok" id="free-msg" style="font-size:14px">🎉 <div><strong data-t="firstFreeAlert">First filing FREE!</strong> <span data-t="noPayment">No payment from you today.</span></div></div>
+
     <div class="steps">
-      <div class="sw-wrap"><div class="sc on" id="sc1">1</div><div class="step-lbl">GSTIN</div></div>
+      <div class="sw-w"><div class="sc on" id="sc1">1</div><div class="step-lbl" data-t="sGstin">GSTIN</div></div>
       <div class="sl" id="sl1"></div>
-      <div class="sw-wrap"><div class="sc" id="sc2">2</div><div class="step-lbl">Return</div></div>
+      <div class="sw-w"><div class="sc" id="sc2">2</div><div class="step-lbl" data-t="sReturn">Return</div></div>
       <div class="sl" id="sl2"></div>
-      <div class="sw-wrap"><div class="sc" id="sc3">3</div><div class="step-lbl">Sales</div></div>
+      <div class="sw-w"><div class="sc" id="sc3">3</div><div class="step-lbl" data-t="sSales">Sales</div></div>
       <div class="sl" id="sl3"></div>
-      <div class="sw-wrap"><div class="sc" id="sc4">4</div><div class="step-lbl">Pay Govt</div></div>
+      <div class="sw-w"><div class="sc" id="sc4">4</div><div class="step-lbl" data-t="sPayGovt">Pay Govt</div></div>
       <div class="sl" id="sl4"></div>
-      <div class="sw-wrap"><div class="sc" id="sc5">5</div><div class="step-lbl">Review</div></div>
+      <div class="sw-w"><div class="sc" id="sc5">5</div><div class="step-lbl" data-t="sReview">Review</div></div>
       <div class="sl" id="sl5"></div>
-      <div class="sw-wrap"><div class="sc" id="sc6">6</div><div class="step-lbl">File</div></div>
+      <div class="sw-w"><div class="sc" id="sc6">6</div><div class="step-lbl" data-t="sFile">File</div></div>
     </div>
     <div class="pbar"><div class="pfill" id="prog" style="width:16%"></div></div>
 
-    <!-- S1 -->
+    <!-- S1 GSTIN -->
     <div id="s1">
       <div class="card">
-        <h3 style="font-size:16px;margin-bottom:4px">Step 1 — Your GSTIN</h3>
-        <p style="font-size:13px;color:var(--t2);margin-bottom:16px">Your 15-character GST number. Find it on your GST certificate.</p>
-        <div class="fg">
-          <label class="fl">GSTIN Number</label>
-          <input type="text" class="fi" id="gstin" placeholder="e.g. 29ABCDE1234F1Z5" maxlength="15" oninput="this.value=this.value.toUpperCase();onGSTIN()" style="letter-spacing:3px;font-weight:700;font-size:18px;text-align:center">
-          <div class="fi-hint">15 characters: State code + PAN + Entity + Check digit</div>
+        <h3 style="font-size:17px;margin-bottom:4px;font-weight:700" data-t="s1Title">Step 1 — Your GSTIN</h3>
+        <p style="font-size:13px;color:var(--t2);margin-bottom:16px" data-t="s1Desc">Your 15-character GST Identification Number</p>
+        <div class="gstin-hint">
+          <div style="font-weight:700;font-size:13px;color:#92400e;margin-bottom:6px" data-t="whereGstin">📍 Where to find your GSTIN?</div>
+          <div style="font-size:12px;color:#92400e;line-height:1.6" data-t="whereGstinDesc">It's on your GST registration certificate, or go to gst.gov.in → My Profile → GSTIN. It looks like: <strong>29ABCDE1234F1Z5</strong></div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
-          <div class="gstin-seg"><strong>29</strong>State Code</div>
-          <div class="gstin-seg"><strong>ABCDE1234F</strong>Your PAN</div>
-          <div class="gstin-seg"><strong>1Z5</strong>Entity+Check</div>
+        <div class="fg">
+          <label class="fl" data-t="gstinLabel">Your GSTIN</label>
+          <input type="text" class="fi" id="gstin" placeholder="29ABCDE1234F1Z5" maxlength="15" oninput="this.value=this.value.toUpperCase();onGSTIN()" style="letter-spacing:3px;font-weight:700;font-size:20px;text-align:center;font-family:'Sora',sans-serif">
+          <div class="fi-hint" data-t="gstinHint">15 characters: State code + PAN + Entity + Check digit</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+          <div class="gstin-seg"><strong>29</strong><span data-t="stateCode">State Code</span></div>
+          <div class="gstin-seg"><strong>ABCDE1234F</strong><span data-t="yourPan">Your PAN</span></div>
+          <div class="gstin-seg"><strong>1Z5</strong><span data-t="checkDigit">Check digit</span></div>
         </div>
         <div class="gverified" id="gstin-ok">
-          <div style="font-size:13px;font-weight:600;color:var(--g);margin-bottom:5px">✅ GSTIN Verified!</div>
+          <div style="font-size:14px;font-weight:700;color:var(--g);margin-bottom:5px" data-t="gstinVerified">✅ GSTIN Verified!</div>
           <div style="font-size:13px;color:var(--t2)" id="gstin-info-txt"></div>
         </div>
-        <div class="fg" style="margin-top:14px">
-          <label class="fl">Your Mobile Number</label>
-          <input type="tel" class="fi" id="mobile" placeholder="10-digit number" maxlength="10" style="font-size:20px;text-align:center;letter-spacing:3px">
-          <div class="fi-hint">For OTP verification and filing updates</div>
+        <div class="fg" style="margin-top:16px">
+          <label class="fl" data-t="mobileLabel">Mobile Number</label>
+          <input type="tel" class="fi" id="mobile" placeholder="10-digit number" maxlength="10" style="font-size:20px;text-align:center;letter-spacing:3px;font-family:'Sora',sans-serif">
+          <div class="fi-hint" data-t="mobileHint">For OTP verification and filing updates</div>
         </div>
-        <button class="btn btn-g btn-block" onclick="step1Next()">Verify & Continue →</button>
+        <button class="btn btn-g btn-block" onclick="step1Next()" data-t="verifyBtn">Verify & Continue →</button>
       </div>
-      <div class="alert a-info" style="margin-top:12px">🧪 <div><strong>Testing?</strong> Use GSTIN: <strong>33AAGCB1286Q1ZB</strong></div></div>
+      <div class="alert a-info" style="margin-top:12px">🧪 <div><strong data-t="testing">Testing?</strong> <span data-t="testGstin">Use GSTIN: <strong>33AAGCB1286Q1ZB</strong> with any 10-digit mobile</span></div></div>
     </div>
 
-    <!-- S2 -->
+    <!-- S2 RETURN -->
     <div id="s2" style="display:none">
       <div class="card">
-        <h3 style="font-size:16px;margin-bottom:4px">Step 2 — Which return?</h3>
-        <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Not sure? Most businesses file <strong>GSTR-3B</strong> every month.</p>
-        <div class="fcard" onclick="selRet('GSTR-1',this)" id="r-GSTR-1">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><div style="font-weight:700;font-size:15px;margin-bottom:3px">GSTR-1</div><div style="font-size:12px;color:var(--t2)">Report all your sales for the month</div><div style="margin-top:6px"><span class="tag t-warn">Due 11th</span> <span class="tag t-info">Monthly</span></div></div>
-            <span id="chk-1" style="font-size:22px;display:none">✅</span>
+        <h3 style="font-size:17px;margin-bottom:4px;font-weight:700" data-t="s2Title">Step 2 — Which return?</h3>
+        <p style="font-size:13px;color:var(--t2);margin-bottom:14px" data-t="s2Desc">Not sure? Most businesses use <strong>GSTR-3B</strong> every month.</p>
+        <div style="display:grid;gap:10px">
+          <div class="fcard" onclick="selRet('GSTR-1',this)" id="r-GSTR-1" style="border-radius:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><div style="font-weight:700;font-size:16px;margin-bottom:4px">GSTR-1</div><div style="font-size:12px;color:var(--t2);margin-bottom:8px" data-t="gstr1RetDesc">Report all your sales for the month</div><span class="tag t-warn">Due 11th</span> <span class="tag t-info" data-t="monthly">Monthly</span></div>
+              <span id="chk-1" style="font-size:24px;display:none">✅</span>
+            </div>
           </div>
-        </div>
-        <div class="fcard" onclick="selRet('GSTR-3B',this)" id="r-GSTR-3B">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><div style="font-weight:700;font-size:15px;margin-bottom:3px">GSTR-3B <span class="tag t-ok" style="font-size:10px;vertical-align:middle">Most Used</span></div><div style="font-size:12px;color:var(--t2)">Summary of sales + pay your GST tax</div><div style="margin-top:6px"><span class="tag t-err">Due 20th</span> <span class="tag t-info">Monthly</span></div></div>
-            <span id="chk-2" style="font-size:22px;display:none">✅</span>
+          <div class="fcard" onclick="selRet('GSTR-3B',this)" id="r-GSTR-3B" style="border-radius:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><div style="font-weight:700;font-size:16px;margin-bottom:4px">GSTR-3B <span class="tag t-ok" style="font-size:10px;vertical-align:middle" data-t="mostUsed">Most Used</span></div><div style="font-size:12px;color:var(--t2);margin-bottom:8px" data-t="gstr3bRetDesc">Summary of sales + pay your GST tax</div><span class="tag t-err">Due 20th</span> <span class="tag t-info" data-t="monthly">Monthly</span></div>
+              <span id="chk-2" style="font-size:24px;display:none">✅</span>
+            </div>
           </div>
-        </div>
-        <div class="fcard" onclick="selRet('GSTR-4',this)" id="r-GSTR-4">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><div style="font-weight:700;font-size:15px;margin-bottom:3px">GSTR-4</div><div style="font-size:12px;color:var(--t2)">For small businesses on Composition scheme</div><div style="margin-top:6px"><span class="tag t-ok">Due 30 Apr</span> <span class="tag t-warn">Annual</span></div></div>
-            <span id="chk-3" style="font-size:22px;display:none">✅</span>
+          <div class="fcard" onclick="selRet('GSTR-4',this)" id="r-GSTR-4" style="border-radius:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><div style="font-weight:700;font-size:16px;margin-bottom:4px">GSTR-4</div><div style="font-size:12px;color:var(--t2);margin-bottom:8px" data-t="gstr4Desc">For small businesses on Composition scheme</div><span class="tag t-ok">Due 30 Apr</span> <span class="tag t-warn" data-t="annual">Annual</span></div>
+              <span id="chk-3" style="font-size:24px;display:none">✅</span>
+            </div>
           </div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:6px">
-          <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="goStep(1)">← Back</button>
-          <button class="btn btn-g" style="flex:2;justify-content:center" onclick="goStep(3)">Continue →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- S3 -->
-    <div id="s3" style="display:none">
-      <div class="card">
-        <h3 style="font-size:16px;margin-bottom:4px">Step 3 — Your Sales</h3>
-        <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Enter your sales amounts. We calculate the tax automatically.</p>
-        <div class="fg"><label class="fl">Month</label><select class="fsel" id="period"><option value="042026">April 2026</option><option value="032026">March 2026</option><option value="022026">February 2026</option></select></div>
-        <div style="background:var(--gl);border-radius:var(--rs);padding:12px;margin-bottom:14px;font-size:13px;color:var(--g)">💡 <strong>Tip:</strong> Enter the price <em>before</em> GST. We add the tax automatically.</div>
-        <div style="font-weight:600;font-size:14px;margin-bottom:10px">🏪 B2B Sales — sold to other businesses</div>
-        <div class="frow">
-          <div class="fg"><label class="fl">Amount (₹)</label><input type="number" class="fi" id="b2b-val" placeholder="0" oninput="updateSum()"></div>
-          <div class="fg"><label class="fl">GST Rate</label><select class="fsel" id="b2b-rate" onchange="updateSum()"><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div>
-        </div>
-        <div style="font-weight:600;font-size:14px;margin-bottom:10px">🛒 B2C Sales — sold to customers</div>
-        <div class="frow">
-          <div class="fg"><label class="fl">Amount (₹)</label><input type="number" class="fi" id="b2c-val" placeholder="0" oninput="updateSum()"></div>
-          <div class="fg"><label class="fl">GST Rate</label><select class="fsel" id="b2c-rate" onchange="updateSum()"><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div>
-        </div>
-        <div style="font-weight:600;font-size:14px;margin-bottom:10px">📦 Nil/Exempt Sales — no GST items</div>
-        <div class="fg"><label class="fl">Amount (₹)</label><input type="number" class="fi" id="nil-val" placeholder="0" oninput="updateSum()"></div>
-        <div style="font-weight:600;font-size:14px;margin-bottom:10px">💡 ITC — GST you paid on purchases (reduces your tax)</div>
-        <div class="frow">
-          <div class="fg"><label class="fl">ITC CGST (₹)</label><input type="number" class="fi" id="itc-c" placeholder="0" oninput="updateSum()"></div>
-          <div class="fg"><label class="fl">ITC SGST (₹)</label><input type="number" class="fi" id="itc-s" placeholder="0" oninput="updateSum()"></div>
-        </div>
-        <div class="calc">
-          <div style="font-weight:700;font-size:13px;color:var(--g);margin-bottom:10px">🧮 Your GST Calculation</div>
-          <div class="crow"><span class="clbl">Total Sales</span><span id="s-tax">₹0</span></div>
-          <div class="crow"><span class="clbl">CGST Collected</span><span id="s-cgst">₹0</span></div>
-          <div class="crow"><span class="clbl">SGST Collected</span><span id="s-sgst">₹0</span></div>
-          <div class="crow"><span class="clbl">ITC Claim (saves you)</span><span id="s-itc" style="color:var(--ok)">-₹0</span></div>
-          <div class="crow"><span>💸 Pay to Government</span><span id="s-net" style="font-size:18px">₹0</span></div>
         </div>
         <div style="display:flex;gap:10px;margin-top:14px">
-          <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="goStep(2)">← Back</button>
-          <button class="btn btn-g" style="flex:2;justify-content:center" onclick="goStep(4)">Next: Pay Govt →</button>
+          <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="goStep(1)" data-t="back">← Back</button>
+          <button class="btn btn-g" style="flex:2;justify-content:center" onclick="goStep(3)" data-t="continue">Continue →</button>
         </div>
       </div>
     </div>
 
-    <!-- S4: GOVT PAYMENT -->
+    <!-- S3 SALES -->
+    <div id="s3" style="display:none">
+      <div class="card">
+        <h3 style="font-size:17px;margin-bottom:4px;font-weight:700" data-t="s3Title">Step 3 — Your Sales</h3>
+        <p style="font-size:13px;color:var(--t2);margin-bottom:14px" data-t="s3Desc">Enter amounts before GST. We calculate tax automatically.</p>
+        <div class="fg"><label class="fl" data-t="monthLabel">Month</label><select class="fsel" id="period"><option value="042026">April 2026</option><option value="032026">March 2026</option><option value="022026">February 2026</option></select></div>
+        <div style="background:linear-gradient(135deg,var(--gl),#d1fae5);border-radius:var(--rs);padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--g);font-weight:600" data-t="salesTip">💡 Enter price before GST. We add the tax for you automatically.</div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:10px" data-t="b2bLabel">🏪 B2B Sales — sold to other businesses</div>
+        <div class="frow"><div class="fg"><label class="fl" data-t="amtLabel">Amount (₹)</label><input type="number" class="fi" id="b2b-val" placeholder="0" oninput="updateSum()"></div><div class="fg"><label class="fl" data-t="rateLabel">GST Rate</label><select class="fsel" id="b2b-rate" onchange="updateSum()"><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div></div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:10px" data-t="b2cLabel">🛒 B2C Sales — sold to customers</div>
+        <div class="frow"><div class="fg"><label class="fl" data-t="amtLabel">Amount (₹)</label><input type="number" class="fi" id="b2c-val" placeholder="0" oninput="updateSum()"></div><div class="fg"><label class="fl" data-t="rateLabel">GST Rate</label><select class="fsel" id="b2c-rate" onchange="updateSum()"><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div></div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:10px" data-t="nilLabel">📦 Nil/Exempt — no GST items</div>
+        <div class="fg"><label class="fl" data-t="amtLabel">Amount (₹)</label><input type="number" class="fi" id="nil-val" placeholder="0" oninput="updateSum()"></div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:10px" data-t="itcLabel">💡 ITC — GST paid on your purchases (reduces your tax)</div>
+        <div class="frow"><div class="fg"><label class="fl">ITC CGST (₹)</label><input type="number" class="fi" id="itc-c" placeholder="0" oninput="updateSum()"></div><div class="fg"><label class="fl">ITC SGST (₹)</label><input type="number" class="fi" id="itc-s" placeholder="0" oninput="updateSum()"></div></div>
+        <div class="calc">
+          <div style="font-weight:700;font-size:13px;color:var(--g);margin-bottom:10px;font-family:'Sora',sans-serif" data-t="autoCalc">🧮 Auto Calculated</div>
+          <div class="crow"><span class="clbl" data-t="totalSales">Total Sales</span><span id="s-tax">₹0</span></div>
+          <div class="crow"><span class="clbl" data-t="cgstCol">CGST Collected</span><span id="s-cgst">₹0</span></div>
+          <div class="crow"><span class="clbl" data-t="sgstCol">SGST Collected</span><span id="s-sgst">₹0</span></div>
+          <div class="crow"><span class="clbl" data-t="itcClaim">ITC Claim</span><span id="s-itc" style="color:var(--ok)">-₹0</span></div>
+          <div class="crow"><span data-t="payGovt">💸 Pay to Government</span><span id="s-net" style="font-size:20px">₹0</span></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="goStep(2)" data-t="back">← Back</button>
+          <button class="btn btn-g" style="flex:2;justify-content:center" onclick="goStep(4)" data-t="nextPayGovt">Next: Pay Govt →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- S4 GOVT PAYMENT -->
     <div id="s4" style="display:none">
       <div class="govt-box">
-        <h3>🏛️ Step 4 — Pay GST Tax to Government</h3>
-        <p>You must pay this amount to the Government before filing. This goes to your Electronic Cash Ledger on the official GST portal. GSTMitra does NOT take this money.</p>
+        <h3 data-t="s4Title">🏛️ Step 4 — Pay GST Tax to Government</h3>
+        <p data-t="s4Desc">Pay this amount to the Government BEFORE filing. This goes directly to your Electronic Cash Ledger on the GST portal. GSTMitra does NOT take this money.</p>
         <div class="govt-amount" id="govt-amt">₹0</div>
-        <div class="gstep"><div class="gstep-num">1</div><div class="gstep-text"><strong>Click the button below</strong> — GST portal opens in a new tab</div></div>
-        <div class="gstep"><div class="gstep-num">2</div><div class="gstep-text"><strong>Login</strong> with your GSTIN and password</div></div>
-        <div class="gstep"><div class="gstep-num">3</div><div class="gstep-text">Go to: <strong>Services → Payments → Create Challan</strong></div></div>
-        <div class="gstep"><div class="gstep-num">4</div><div class="gstep-text">Enter amount: <strong id="govt-amt-inline">₹0</strong> → Pay via UPI / Net Banking / Card</div></div>
-        <div class="gstep"><div class="gstep-num">5</div><div class="gstep-text"><strong>Come back here</strong> → toggle the switch below → continue filing</div></div>
+        <div style="font-size:12px;color:#1e40af;margin-bottom:14px;opacity:.8" data-t="netPayable">This is your net GST payable to Government</div>
+        <div class="gstep"><div class="gstep-n">1</div><div class="gstep-t" data-t="gs1"><strong>Click button below</strong> — GST portal opens in new tab</div></div>
+        <div class="gstep"><div class="gstep-n">2</div><div class="gstep-t" data-t="gs2"><strong>Login</strong> with your GSTIN and password</div></div>
+        <div class="gstep"><div class="gstep-n">3</div><div class="gstep-t" data-t="gs3">Go to: <strong>Services → Payments → Create Challan</strong></div></div>
+        <div class="gstep"><div class="gstep-n">4</div><div class="gstep-t">Enter amount: <strong id="govt-amt-i">₹0</strong> → <span data-t="gs4">Pay via UPI / Net Banking / Card</span></div></div>
+        <div class="gstep"><div class="gstep-n">5</div><div class="gstep-t" data-t="gs5"><strong>Come back here</strong> → toggle switch below → continue filing</div></div>
         <a href="https://services.gst.gov.in/services/auth/fowelcome" target="_blank" style="text-decoration:none;display:block;margin-top:4px">
-          <button class="btn btn-blue btn-block">🏛️ Open GST Portal to Pay →</button>
+          <button class="btn btn-blue btn-block" data-t="openGstPortal">🏛️ Open GST Portal to Pay →</button>
         </a>
       </div>
       <div class="card">
-        <div class="pay-status ps-pending" id="pay-st">⏳ Waiting — please pay on GST portal first...</div>
-        <div class="confirm-row">
-          <div><div style="font-size:14px;font-weight:600">✅ I have paid <span id="govt-confirm-amt">₹0</span> to Government</div><div style="font-size:11px;color:var(--t2);margin-top:3px">Toggle ON after completing payment on GST portal</div></div>
-          <label class="sw-toggle"><input type="checkbox" id="govt-chk" onchange="onGovtPaid(this)"><span class="sw-sl"></span></label>
+        <div class="ps-p" id="pay-st" data-t="waitingPayment">⏳ Waiting — please pay on GST portal first...</div>
+        <div class="cr">
+          <div><div style="font-size:14px;font-weight:700">✅ <span data-t="iPaid">I paid</span> <span id="govt-c-amt">₹0</span> <span data-t="toGovt">to Government</span></div><div style="font-size:11px;color:var(--t2);margin-top:3px" data-t="toggleAfter">Toggle ON after completing payment on GST portal</div></div>
+          <label class="sw-t"><input type="checkbox" id="govt-chk" onchange="onGovtPaid(this)"><span class="sw-sl"></span></label>
         </div>
         <div style="display:flex;gap:10px;margin-top:14px">
-          <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="goStep(3)">← Back</button>
-          <button class="btn btn-g" style="flex:2;justify-content:center" id="govt-next" onclick="goStep(5)" disabled>Confirm & Review →</button>
+          <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="goStep(3)" data-t="back">← Back</button>
+          <button class="btn btn-g" style="flex:2;justify-content:center" id="govt-next" onclick="goStep(5)" disabled data-t="confirmReview">Confirm & Review →</button>
         </div>
       </div>
-      <div class="alert a-info" style="margin-top:12px">ℹ️ <div><strong>Tax is ₹0?</strong> (ITC covers everything) — Toggle the switch and continue directly!</div></div>
+      <div class="alert a-info" style="margin-top:12px">ℹ️ <div data-t="zeroTax"><strong>Tax is ₹0?</strong> ITC covers everything — toggle ON and continue directly!</div></div>
     </div>
 
-    <!-- S5: REVIEW -->
+    <!-- S5 REVIEW -->
     <div id="s5" style="display:none">
       <div class="card">
-        <h3 style="font-size:16px;margin-bottom:14px">Step 5 — Review Everything</h3>
-        <div class="alert a-ok">✅ <div>No errors found. Ready to file!</div></div>
+        <h3 style="font-size:17px;margin-bottom:14px;font-weight:700" data-t="s5Title">Step 5 — Review Everything</h3>
+        <div class="alert a-ok" data-t="noErrors">✅ No errors found. Your return is ready to file!</div>
         <div style="background:var(--bg);border-radius:var(--rs);padding:14px;margin-bottom:14px">
-          <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--t2)">GSTIN</span><span style="font-size:13px;font-weight:700" id="rv-gstin">—</span></div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--t2)">Return Type</span><span class="tag t-info" id="rv-ret">—</span></div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--t2)">Period</span><span style="font-size:13px;font-weight:700" id="rv-per">—</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--t2);font-weight:600" data-t="gstinLabel">GSTIN</span><span style="font-size:13px;font-weight:700;font-family:'Sora',sans-serif" id="rv-gstin">—</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--t2);font-weight:600" data-t="returnType">Return Type</span><span class="tag t-info" id="rv-ret">—</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--t2);font-weight:600" data-t="periodLabel">Period</span><span style="font-size:13px;font-weight:700" id="rv-per">—</span></div>
           <div style="height:1px;background:var(--bdr);margin:8px 0"></div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:#1e40af;font-weight:600">🏛️ Paid to Govt</span><span style="font-size:16px;font-weight:700;color:#1e40af" id="rv-govt">₹0</span></div>
-          <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:#92400e;font-weight:600">💰 GSTMitra Fee</span><span style="font-size:16px;font-weight:700;color:#92400e" id="rv-fee">₹199</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:#1e40af;font-weight:700" data-t="paidGovt">🏛️ Paid to Govt</span><span style="font-size:17px;font-weight:800;color:#1e40af;font-family:'Sora',sans-serif" id="rv-govt">₹0</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:#92400e;font-weight:700" data-t="gstmitraFee">💰 GSTMitra Fee</span><span style="font-size:17px;font-weight:800;color:#92400e;font-family:'Sora',sans-serif" id="rv-fee">₹199</span></div>
         </div>
-        <div class="confirm-row" style="margin-bottom:14px">
-          <div><div style="font-size:14px;font-weight:600">All details are correct</div><div style="font-size:11px;color:var(--t2);margin-top:2px">Wrong return = ₹50/day penalty from GST dept</div></div>
-          <label class="sw-toggle"><input type="checkbox" id="confirm-chk"><span class="sw-sl"></span></label>
+        <div class="cr" style="margin-bottom:14px">
+          <div><div style="font-size:14px;font-weight:700" data-t="confirmDetails">All details are correct</div><div style="font-size:11px;color:var(--t2);margin-top:3px" data-t="wrongPenalty">Wrong return = ₹50/day penalty from GST dept</div></div>
+          <label class="sw-t"><input type="checkbox" id="confirm-chk"><span class="sw-sl"></span></label>
         </div>
         <div style="display:flex;gap:10px">
-          <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="goStep(4)">← Back</button>
-          <button class="btn btn-g" style="flex:2;justify-content:center" onclick="goStep(6)">Pay & File →</button>
+          <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="goStep(4)" data-t="back">← Back</button>
+          <button class="btn btn-g" style="flex:2;justify-content:center" onclick="goStep(6)" data-t="payFile">Pay & File →</button>
         </div>
       </div>
     </div>
 
-    <!-- S6: PAY + FILE -->
+    <!-- S6 FILE -->
     <div id="s6" style="display:none">
       <div class="card">
-        <h3 style="font-size:16px;margin-bottom:14px">Step 6 — Pay ₹199 & File</h3>
-        <div class="alert a-ok" id="s6-free">🎉 <div><strong>FREE filing!</strong> No service fee for your first return.</div></div>
+        <h3 style="font-size:17px;margin-bottom:14px;font-weight:700" data-t="s6Title">Step 6 — Pay ₹199 & File</h3>
+        <div class="alert a-ok" id="s6-free">🎉 <div><strong data-t="freeFiling">FREE filing!</strong> <span data-t="noServiceFee">No service fee for your first return.</span></div></div>
         <div id="s6-pay" style="display:none">
-          <div style="background:var(--ab);border-radius:var(--rs);padding:16px;margin-bottom:14px;text-align:center">
-            <div style="font-size:13px;color:#92400e;margin-bottom:4px">GSTMitra Service Fee</div>
-            <div style="font-size:40px;font-weight:700;font-family:'Sora',sans-serif;color:#92400e">₹199</div>
-            <div style="font-size:11px;color:#92400e;margin-top:2px">For filing your GST return</div>
+          <div style="background:linear-gradient(135deg,var(--ab),#fef9c3);border:2px solid rgba(245,166,35,0.3);border-radius:var(--r);padding:18px;margin-bottom:14px;text-align:center">
+            <div style="font-size:13px;color:#92400e;margin-bottom:6px;font-weight:600" data-t="serviceFeeLabel">GSTMitra Service Fee</div>
+            <div style="font-size:46px;font-weight:800;font-family:'Sora',sans-serif;color:#92400e;line-height:1;letter-spacing:-2px">₹199</div>
+            <div style="font-size:12px;color:#92400e;margin-top:6px;opacity:.7" data-t="serviceFeeDesc">For filing your GST return professionally</div>
           </div>
           <div class="popts">
             <div class="popt on" onclick="selPay('upi',this)" id="po-upi"><div class="popt-ic">📱</div><div class="popt-lb">UPI</div></div>
             <div class="popt" onclick="selPay('card',this)" id="po-card"><div class="popt-ic">💳</div><div class="popt-lb">Card</div></div>
-            <div class="popt" onclick="selPay('nb',this)" id="po-nb"><div class="popt-ic">🏦</div><div class="popt-lb">Net Banking</div></div>
+            <div class="popt" onclick="selPay('nb',this)" id="po-nb"><div class="popt-ic">🏦</div><div class="popt-lb" data-t="netBanking">Net Banking</div></div>
           </div>
-          <div class="fg"><label class="fl">UPI ID</label><input type="text" class="fi" id="upi-id" placeholder="yourname@upi or 9999999999@upi"></div>
-          <button class="btn btn-acc btn-block" onclick="payFee()" style="margin-bottom:14px">Pay ₹199 →</button>
+          <button class="btn btn-acc btn-block" onclick="payWithRazorpay()" style="margin-bottom:14px" data-t="payRazorpay">💳 Pay ₹199 with Razorpay →</button>
           <hr style="border:none;border-top:1px solid var(--bdr);margin-bottom:14px">
         </div>
         <div class="fg">
-          <label class="fl">GST Portal OTP</label>
-          <input type="text" class="fi" id="gst-otp" placeholder="Enter 6-digit OTP" maxlength="6" style="letter-spacing:8px;font-size:24px;font-weight:700;text-align:center">
-          <div class="fi-hint">Sandbox mode: use OTP <strong>575757</strong></div>
+          <label class="fl" data-t="otpLabel">GST Portal OTP</label>
+          <input type="text" class="fi" id="gst-otp" placeholder="Enter 6-digit OTP" maxlength="6" style="letter-spacing:10px;font-size:28px;font-weight:800;text-align:center;font-family:'Sora',sans-serif">
+          <div class="fi-hint" data-t="sandboxOtp">Sandbox mode: use OTP <strong>575757</strong></div>
         </div>
-        <button class="btn btn-g btn-block" id="file-btn" onclick="fileReturn()" style="font-size:16px;padding:16px">🚀 File GST Return Now</button>
-        <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--t3)">🔒 Secured via WhiteBooks GSP · GSTN Licensed</div>
+        <button class="btn btn-g btn-block" id="file-btn" onclick="fileReturn()" style="font-size:16px;padding:17px" data-t="fileNow">🚀 File GST Return Now</button>
+        <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--t3)" data-t="secured">🔒 Secured via WhiteBooks GSP · GSTN Licensed</div>
       </div>
     </div>
 
     <!-- SUCCESS -->
     <div id="s-done" style="display:none">
-      <div class="card" style="text-align:center;padding:30px 16px">
-        <div class="success-ic">✅</div>
-        <h2 style="color:var(--g);margin-bottom:8px;font-size:24px">Filed Successfully!</h2>
-        <p style="color:var(--t2);font-size:14px;margin-bottom:20px;line-height:1.6">Your return has been submitted to GSTN via WhiteBooks GSP</p>
-        <div style="background:var(--gl);border-radius:var(--rs);padding:16px;margin-bottom:16px;text-align:left">
-          <div style="display:flex;justify-content:space-between;margin-bottom:9px"><span style="font-size:13px;color:var(--t2)">ARN Number</span><strong style="font-size:13px;color:var(--g)" id="done-arn">—</strong></div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:9px"><span style="font-size:13px;color:var(--t2)">Filed On</span><strong style="font-size:13px" id="done-date">—</strong></div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:9px"><span style="font-size:13px;color:var(--t2)">Tax Paid to Govt</span><strong style="font-size:13px;color:#1e40af" id="done-govt">—</strong></div>
-          <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--t2)">Status</span><span class="tag t-ok">✅ Filed</span></div>
+      <div class="card" style="text-align:center;padding:34px 18px">
+        <div class="suc-ic">✅</div>
+        <h2 style="color:var(--g);margin-bottom:8px;font-size:26px;letter-spacing:-.5px" data-t="filedSuccess">Filed Successfully!</h2>
+        <p style="color:var(--t2);font-size:14px;margin-bottom:22px;line-height:1.7" data-t="submittedVia">Your GST return has been submitted to GSTN via WhiteBooks GSP</p>
+        <div style="background:linear-gradient(135deg,var(--gl),#d1fae5);border-radius:var(--rs);padding:16px;margin-bottom:18px;text-align:left">
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--t2);font-weight:600" data-t="arnLabel">ARN Number</span><strong style="font-size:13px;color:var(--g);font-family:'Sora',sans-serif" id="done-arn">—</strong></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--t2);font-weight:600" data-t="filedOn">Filed On</span><strong style="font-size:13px;font-family:'Sora',sans-serif" id="done-date">—</strong></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--t2);font-weight:600" data-t="taxPaidGovt">Tax Paid to Govt</span><strong style="font-size:13px;color:#1e40af;font-family:'Sora',sans-serif" id="done-govt">—</strong></div>
+          <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--t2);font-weight:600" data-t="status">Status</span><span class="tag t-ok">✅ <span data-t="filed">Filed</span></span></div>
         </div>
-        <div class="alert a-info" style="text-align:left;margin-bottom:16px">📱 <div>Save your ARN number. Check status anytime on gst.gov.in</div></div>
-        <button class="btn btn-g btn-block" style="margin-bottom:10px">📄 Download Acknowledgement</button>
-        <button class="btn btn-ghost btn-block" onclick="resetFiling()">📋 File Another Return</button>
+        <div class="alert a-info" style="text-align:left;margin-bottom:16px">📱 <div data-t="saveArn">Save your ARN number. Check status anytime on gst.gov.in</div></div>
+        <button class="btn btn-g btn-block" style="margin-bottom:10px" data-t="downloadAck">📄 Download Acknowledgement</button>
+        <button class="btn btn-ghost btn-block" onclick="resetFiling()" data-t="fileAnother">📋 File Another Return</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- TRACK -->
+<!-- ==================== TRACK ==================== -->
 <div class="page" id="page-track">
-  <div style="background:var(--g);padding:20px 16px 24px;color:#fff">
-    <h2 style="color:#fff;font-size:22px;margin-bottom:4px">My Returns</h2>
-    <p style="opacity:.8;font-size:13px">All your filed GST returns</p>
+  <div style="background:linear-gradient(160deg,var(--gd),var(--g));padding:22px 16px 30px;color:#fff">
+    <h2 style="color:#fff;font-size:22px;margin-bottom:4px" data-t="trackTitle">My Returns</h2>
+    <p style="opacity:.75;font-size:13px" data-t="trackDesc">All your filed GST returns in one place</p>
   </div>
   <div class="sec">
-    <div class="card" style="padding:12px;margin-bottom:14px">
-      <label class="fl">Enter mobile number to see your filings</label>
-      <div style="display:flex;gap:8px"><input type="tel" class="fi" id="track-mob" placeholder="10-digit mobile" maxlength="10" style="flex:1"><button class="btn btn-g" onclick="loadFilings()" style="border-radius:10px;padding:13px 16px">Search</button></div>
+    <div class="card" style="padding:14px;margin-bottom:14px">
+      <label class="fl" data-t="trackLabel">Enter mobile to see filings</label>
+      <div style="display:flex;gap:10px"><input type="tel" class="fi" id="track-mob" placeholder="10-digit mobile" maxlength="10" style="flex:1"><button class="btn btn-g" onclick="loadFilings()" style="border-radius:12px;padding:13px 16px" data-t="search">Search</button></div>
     </div>
-    <div id="track-res"><div class="alert a-info">ℹ️ <div>Enter your mobile number to see all filing history.</div></div></div>
+    <div id="track-res"><div class="alert a-info">ℹ️ <div data-t="enterMobile">Enter your mobile number to see all your GST filing history.</div></div></div>
     <div id="track-sum" style="display:none;margin-top:14px">
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-        <div style="background:var(--gl);border-radius:var(--rs);padding:14px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--g)" id="t-total">0</div><div style="font-size:11px;color:var(--t2)">Filed</div></div>
-        <div style="background:var(--ab);border-radius:var(--rs);padding:14px;text-align:center"><div style="font-size:14px;font-weight:700;color:#92400e" id="t-free">FREE</div><div style="font-size:11px;color:var(--t2)">Next Filing</div></div>
-        <div style="background:#F0FDF4;border-radius:var(--rs);padding:14px;text-align:center"><div style="font-size:18px;font-weight:700;color:var(--ok)" id="t-tax">₹0</div><div style="font-size:11px;color:var(--t2)">Tax Paid</div></div>
+        <div style="background:linear-gradient(135deg,var(--gl),#d1fae5);border-radius:var(--rs);padding:14px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:24px;font-weight:800;color:var(--g);font-family:'Sora',sans-serif" id="t-total">0</div><div style="font-size:10px;color:var(--t2);font-weight:600;margin-top:2px" data-t="filed">FILED</div></div>
+        <div style="background:linear-gradient(135deg,var(--ab),#fef9c3);border-radius:var(--rs);padding:14px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:14px;font-weight:800;color:#92400e;font-family:'Sora',sans-serif" id="t-free">FREE</div><div style="font-size:10px;color:var(--t2);font-weight:600;margin-top:2px" data-t="nextFee">NEXT FEE</div></div>
+        <div style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border-radius:var(--rs);padding:14px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:18px;font-weight:800;color:var(--ok);font-family:'Sora',sans-serif" id="t-tax">₹0</div><div style="font-size:10px;color:var(--t2);font-weight:600;margin-top:2px" data-t="taxPaid">TAX PAID</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- LEARN -->
+<!-- ==================== LEARN ==================== -->
 <div class="page" id="page-learn">
-  <div style="background:var(--g);padding:20px 16px 24px;color:#fff">
-    <h2 style="color:#fff;font-size:22px;margin-bottom:4px">Learn GST — A to Z</h2>
-    <p style="opacity:.8;font-size:13px">Simple language · No difficult words · Perfect for beginners</p>
+  <div style="background:linear-gradient(160deg,var(--gd),var(--g));padding:22px 16px 30px;color:#fff">
+    <h2 style="color:#fff;font-size:22px;margin-bottom:4px" data-t="learnTitle">Learn GST — A to Z</h2>
+    <p style="opacity:.75;font-size:13px" data-t="learnSubtitle">Simple language · No jargon · Perfect for beginners</p>
   </div>
   <div class="sec">
-    <div class="lcard" onclick="openLearn('what')"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:26px">🤔</span><div><div style="font-weight:600;font-size:14px">What is GST?</div><div style="font-size:12px;color:var(--t2)">Basic intro — what it is and why it exists</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
-    <div class="lcard" onclick="openLearn('reg')"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:26px">📝</span><div><div style="font-weight:600;font-size:14px">How to Register for GST</div><div style="font-size:12px;color:var(--t2)">Step-by-step registration guide</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
-    <div class="lcard" onclick="openLearn('pay')"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:26px">🏛️</span><div><div style="font-weight:600;font-size:14px">How to Pay GST to Government</div><div style="font-size:12px;color:var(--t2)">Step-by-step payment guide</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
-    <div class="lcard" onclick="openLearn('returns')"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:26px">📋</span><div><div style="font-weight:600;font-size:14px">Types of Returns</div><div style="font-size:12px;color:var(--t2)">GSTR-1, 3B, 4, 9 — simple explanation</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
-    <div class="lcard" onclick="openLearn('itc')"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:26px">💰</span><div><div style="font-weight:600;font-size:14px">Input Tax Credit (ITC)</div><div style="font-size:12px;color:var(--t2)">How to save money on your taxes</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
-    <div class="lcard" onclick="openLearn('penalty')"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:26px">⚠️</span><div><div style="font-weight:600;font-size:14px">Late Filing Penalties</div><div style="font-size:12px;color:var(--t2)">How to avoid fines</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
-    <div class="lcard" onclick="openLearn('eway')"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:26px">🚛</span><div><div style="font-weight:600;font-size:14px">E-Way Bill</div><div style="font-size:12px;color:var(--t2)">When and how to generate</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
+    <!-- HELP SECTION FOR SMALL WORKERS -->
+    <div class="easy-box" style="margin-bottom:14px">
+      <h3>📞 <span data-t="needHelp">Need help? We're here!</span></h3>
+      <p style="font-size:13px;color:#5b21b6;margin-bottom:12px" data-t="helpDesc">If you're confused about anything, just call or WhatsApp us. We will guide you for free!</p>
+      <div class="help-card" onclick="showHelp()">
+        <span style="font-size:28px">📱</span>
+        <div><div style="font-weight:700;font-size:14px;color:var(--g)" data-t="whatsappUs">WhatsApp Us</div><div style="font-size:12px;color:var(--t2)" data-t="whatsappDesc">Quick reply · Free guidance</div></div>
+      </div>
+      <div class="help-card" onclick="showHelp()">
+        <span style="font-size:28px">📹</span>
+        <div><div style="font-weight:700;font-size:14px;color:var(--g)" data-t="watchVideo">Watch How-To Videos</div><div style="font-size:12px;color:var(--t2)" data-t="videoDesc">Step by step video guide in your language</div></div>
+      </div>
+    </div>
+
+    <div class="lcard" onclick="openLearn('what')"><div style="display:flex;gap:12px;align-items:center"><span class="lcard-ic">🤔</span><div><div style="font-weight:700;font-size:14px" data-t="whatGst">What is GST?</div><div style="font-size:12px;color:var(--t2);margin-top:2px" data-t="whatGstDesc">Basic intro — what it is and why it exists</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
+    <div class="lcard" onclick="openLearn('reg')"><div style="display:flex;gap:12px;align-items:center"><span class="lcard-ic">📝</span><div><div style="font-weight:700;font-size:14px" data-t="howReg">How to Register for GST</div><div style="font-size:12px;color:var(--t2);margin-top:2px" data-t="howRegDesc">Step-by-step registration guide</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
+    <div class="lcard" onclick="openLearn('pay')"><div style="display:flex;gap:12px;align-items:center"><span class="lcard-ic">🏛️</span><div><div style="font-weight:700;font-size:14px" data-t="howPay">How to Pay GST to Government</div><div style="font-size:12px;color:var(--t2);margin-top:2px" data-t="howPayDesc">Step-by-step payment guide</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
+    <div class="lcard" onclick="openLearn('returns')"><div style="display:flex;gap:12px;align-items:center"><span class="lcard-ic">📋</span><div><div style="font-weight:700;font-size:14px" data-t="typesRet">Types of GST Returns</div><div style="font-size:12px;color:var(--t2);margin-top:2px" data-t="typesRetDesc">GSTR-1, 3B, 4, 9 explained simply</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
+    <div class="lcard" onclick="openLearn('itc')"><div style="display:flex;gap:12px;align-items:center"><span class="lcard-ic">💰</span><div><div style="font-weight:700;font-size:14px" data-t="itcTitle">Input Tax Credit (ITC)</div><div style="font-size:12px;color:var(--t2);margin-top:2px" data-t="itcDesc">How to save money on your taxes</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
+    <div class="lcard" onclick="openLearn('penalty')"><div style="display:flex;gap:12px;align-items:center"><span class="lcard-ic">⚠️</span><div><div style="font-weight:700;font-size:14px" data-t="penTitle">Late Filing Penalties</div><div style="font-size:12px;color:var(--t2);margin-top:2px" data-t="penDesc">How to avoid fines</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
+    <div class="lcard" onclick="openLearn('eway')"><div style="display:flex;gap:12px;align-items:center"><span class="lcard-ic">🚛</span><div><div style="font-weight:700;font-size:14px" data-t="ewayTitle">E-Way Bill</div><div style="font-size:12px;color:var(--t2);margin-top:2px" data-t="ewayDesc">When and how to generate</div></div></div><span style="color:var(--t3);font-size:22px">›</span></div>
   </div>
 </div>
 
@@ -547,82 +713,686 @@ input:checked+.sw-sl:before{transform:translateX(23px)}
 <div class="modal-bg" id="modal" style="display:none" onclick="closeModal(event)">
   <div class="modal">
     <div class="mhandle"></div>
-    <h3 id="modal-title" style="margin-bottom:14px;font-size:18px"></h3>
+    <h3 id="modal-title" style="margin-bottom:14px;font-size:20px;letter-spacing:-.3px"></h3>
     <div id="modal-body" style="font-size:14px;color:var(--t2);line-height:1.8"></div>
-    <button class="btn btn-g btn-block" style="margin-top:20px" onclick="document.getElementById('modal').style.display='none'">Got it! ✓</button>
+    <button class="btn btn-g btn-block" style="margin-top:20px" onclick="document.getElementById('modal').style.display='none'" data-t="gotIt">Got it! ✓</button>
   </div>
 </div>
 
 <script>
-const API='http://localhost:3001/api';
-const FEE=199;
-let selReturn='GSTR-1',gstRate=18,filingCount=0,netGST=0;
-const SB={'33AAGCB1286Q1ZB':{name:'Test Business TN Pvt Ltd',state:'Tamil Nadu',type:'Regular'},'27AAGCB1286Q1Z4':{name:'Test Business MH Pvt Ltd',state:'Maharashtra',type:'Regular'},'33AAGCB1286Q2ZA':{name:'Test Co TN',state:'Tamil Nadu',type:'Regular'},'27AAGCB1286Q2Z3':{name:'Test Co MH',state:'Maharashtra',type:'Regular'}};
+// ============================================================
+// RAZORPAY — YOUR REAL TEST KEYS
+// ============================================================
+const RAZORPAY_KEY = 'rzp_test_SnwyG7NuuijmhY';
+const FEE = 199;
+const API = 'http://localhost:3001/api';
 
-function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');document.querySelectorAll('.bi').forEach(x=>x.classList.remove('on'));const b=document.getElementById('bn-'+p);if(b)b.classList.add('on');window.scrollTo(0,0);}
+let selReturn='GSTR-1', gstRate=18, filingCount=0, netGST=0, paymentDone=false, curLang='en';
 
-function goStep(n){
-  if(n===6&&!document.getElementById('confirm-chk').checked){alert('Please confirm the details are correct first — toggle the switch in Step 5!');return;}
-  for(let i=1;i<=6;i++){const el=document.getElementById('s'+i);if(el)el.style.display='none';}
-  document.getElementById('s-done').style.display='none';
-  document.getElementById('s'+n).style.display='block';
-  for(let i=1;i<=6;i++){const c=document.getElementById('sc'+i);if(i<n){c.className='sc done';c.textContent='✓';}else if(i===n){c.className='sc on';c.textContent=i;}else{c.className='sc';c.textContent=i;}if(i<6)document.getElementById('sl'+i).className=i<n?'sl done':'sl';}
-  document.getElementById('prog').style.width=Math.round(n/6*100)+'%';
-  if(n===4){const a='₹'+netGST.toFixed(2);document.getElementById('govt-amt').textContent=a;document.getElementById('govt-amt-inline').textContent=a;document.getElementById('govt-confirm-amt').textContent=a;if(netGST===0){document.getElementById('govt-chk').checked=true;onGovtPaid(document.getElementById('govt-chk'));}}
-  if(n===5){document.getElementById('rv-gstin').textContent=document.getElementById('gstin').value;document.getElementById('rv-ret').textContent=selReturn;document.getElementById('rv-per').textContent=document.getElementById('period').options[document.getElementById('period').selectedIndex].text;document.getElementById('rv-govt').textContent='₹'+netGST.toFixed(2);document.getElementById('rv-fee').textContent=filingCount===0?'FREE — ₹0':'₹'+FEE;}
-  if(n===6){const f=filingCount===0;document.getElementById('s6-free').style.display=f?'flex':'none';document.getElementById('s6-pay').style.display=f?'none':'block';}
-  window.scrollTo(0,0);
+// ============================================================
+// ALL INDIAN LANGUAGES TRANSLATIONS
+// ============================================================
+const T = {
+  en: {
+    heroAccent:'Simple. Fast. ₹199 only.',
+    heroDesc:'No CA needed. No confusing forms. File your GST return in 5 minutes — we guide you every step!',
+    startFiling:'🚀 Start Filing — FREE', calculator:'🔢 Calculator',
+    firstFiling:'First Filing', perFiling:'Per Filing', avgTime:'Avg. Time',
+    easyTitle:'New to GST? Start here!',
+    easyDesc:'We made filing super simple. Just follow our step-by-step guide!',
+    guideMe:'Guide Me Step by Step', callHelp:'Need Help? Call Us',
+    freeAlert:'First GST filing is 100% FREE!', freeAlertSub:'No credit card. No hidden charges.',
+    howPayWorks:'💡 How payments work — very simple',
+    govt:'Government', govtDesc:'e.g. ₹9,000 → paid directly on GST portal',
+    gstmitra:'GSTMitra', gstmitraDesc:'Service fee for filing your return',
+    whatYouCan:'What you can do',
+    gstr1:'File GSTR-1', gstr1Desc:'Sales return · Due 11th',
+    gstr3b:'File GSTR-3B', gstr3bDesc:'Summary + Tax · Due 20th',
+    gstCalc:'GST Calculator', gstCalcDesc:'Instant calculation',
+    learnGst:'Learn GST A-Z', learnGstDesc:'Simple guides',
+    myReturns:'My Returns', myReturnsDesc:'Filing history',
+    helpSupport:'Help & Support', helpSupportDesc:'WhatsApp / Call',
+    howWorks:'📋 How it works',
+    step1Title:'Enter your GSTIN', step1Desc:'Your 15-digit GST number. We verify it instantly.',
+    step2Title:'Enter your sales', step2Desc:'How much you sold. We calculate the tax automatically.',
+    step3Title:'Pay GST tax to Government', step3Desc:'We show exact amount. You pay on GST portal.',
+    step4Title:'Pay ₹199 & Get Filed', step4Desc:'We file your return. ARN number instantly.',
+    pricing:'💰 Pricing', firstFree:'FIRST FILING — FREE',
+    firstFreeDesc:'Your very first GST return — completely free',
+    fileForFree:'File for FREE →', afterFirst:'AFTER FIRST FILING',
+    paidDesc:'All return types · Unlimited invoices',
+    taxSeparate:'GST tax paid separately to Government',
+    getStarted:'Get Started →',
+    dueDates:'📅 GST Due Dates', return:'Return', who:'Who', due:'Due',
+    allTax:'All taxpayers', composition:'Composition', annual:'Annual',
+    home:'Home', calc:'Calculator', file:'File GST', track:'My Returns', learn:'Learn',
+    calcTitle:'GST Calculator', calcDesc:'Instant calculation for any amount',
+    amountLabel:'Amount (₹)', amountHint:'Enter the amount you want to calculate GST on',
+    gstRateLabel:'GST Rate — tap to select', calcType:'Type',
+    addGst:'Add GST on top of my price', removeGst:'GST already included in price',
+    breakdown:'📊 GST Breakdown', baseAmt:'Base Amount', totalAmt:'💰 Total Amount',
+    rateGuide:'Which rate applies to what?',
+    rate0:'Rice, wheat, milk, eggs, vegetables, books', rate5:'Packed food, footwear <₹1000, flights',
+    rate12:'Processed food, business travel', rate18:'Most services, restaurants, hotels',
+    rate28:'Luxury cars, tobacco, aerated drinks',
+    fileTitle:'File GST Return', fileDesc:'Follow the steps — we guide you every step',
+    firstFreeAlert:'First filing FREE!', noPayment:'No payment from you today.',
+    sGstin:'GSTIN', sReturn:'Return', sSales:'Sales', sPayGovt:'Pay Govt', sReview:'Review', sFile:'File',
+    s1Title:'Step 1 — Your GSTIN', s1Desc:'Your 15-character GST Identification Number',
+    whereGstin:'📍 Where to find your GSTIN?',
+    whereGstinDesc:'It\'s on your GST registration certificate. Looks like: 29ABCDE1234F1Z5',
+    gstinLabel:'Your GSTIN', gstinHint:'15 characters: State code + PAN + Entity + Check digit',
+    stateCode:'State Code', yourPan:'Your PAN', checkDigit:'Check digit',
+    gstinVerified:'✅ GSTIN Verified!', verifyBtn:'Verify & Continue →',
+    mobileLabel:'Mobile Number', mobileHint:'For OTP verification and filing updates',
+    testing:'Testing?', testGstin:'Use GSTIN: 33AAGCB1286Q1ZB with any 10-digit mobile',
+    s2Title:'Step 2 — Which return?', s2Desc:'Not sure? Most businesses use GSTR-3B every month.',
+    gstr1RetDesc:'Report all your sales for the month',
+    gstr3bRetDesc:'Summary of sales + pay your GST tax',
+    gstr4Desc:'For small businesses on Composition scheme',
+    mostUsed:'Most Used', monthly:'Monthly', annual2:'Annual', back:'← Back', continue:'Continue →',
+    s3Title:'Step 3 — Your Sales', s3Desc:'Enter amounts before GST. We calculate tax automatically.',
+    monthLabel:'Month', salesTip:'💡 Enter price before GST. We add the tax automatically.',
+    b2bLabel:'🏪 B2B Sales — sold to other businesses',
+    b2cLabel:'🛒 B2C Sales — sold to customers',
+    nilLabel:'📦 Nil/Exempt — no GST items',
+    itcLabel:'💡 ITC — GST paid on your purchases (reduces your tax)',
+    amtLabel:'Amount (₹)', rateLabel:'GST Rate',
+    autoCalc:'🧮 Auto Calculated', totalSales:'Total Sales',
+    cgstCol:'CGST Collected', sgstCol:'SGST Collected', itcClaim:'ITC Claim',
+    payGovt:'💸 Pay to Government', nextPayGovt:'Next: Pay Govt →',
+    s4Title:'🏛️ Step 4 — Pay GST Tax to Government',
+    s4Desc:'Pay this amount to the Government BEFORE filing. GSTMitra does NOT take this money.',
+    netPayable:'This is your net GST payable to Government',
+    gs1:'Click button below — GST portal opens in new tab',
+    gs2:'Login with your GSTIN and password',
+    gs3:'Go to: Services → Payments → Create Challan',
+    gs4:'Pay via UPI / Net Banking / Card',
+    gs5:'Come back here → toggle switch below → continue filing',
+    openGstPortal:'🏛️ Open GST Portal to Pay →',
+    waitingPayment:'⏳ Waiting — please pay on GST portal first...',
+    iPaid:'I paid', toGovt:'to Government',
+    toggleAfter:'Toggle ON after completing payment on GST portal',
+    confirmReview:'Confirm & Review →',
+    zeroTax:'Tax is ₹0? ITC covers everything — toggle ON and continue!',
+    s5Title:'Step 5 — Review Everything',
+    noErrors:'✅ No errors found. Your return is ready to file!',
+    gstinLabel2:'GSTIN', returnType:'Return Type', periodLabel:'Period',
+    paidGovt:'🏛️ Paid to Govt', gstmitraFee:'💰 GSTMitra Fee',
+    confirmDetails:'All details are correct',
+    wrongPenalty:'Wrong return = ₹50/day penalty from GST dept',
+    payFile:'Pay & File →',
+    s6Title:'Step 6 — Pay ₹199 & File',
+    freeFiling:'FREE filing!', noServiceFee:'No service fee for your first return.',
+    serviceFeeLabel:'GSTMitra Service Fee', serviceFeeDesc:'For filing your GST return professionally',
+    netBanking:'Net Banking', payRazorpay:'💳 Pay ₹199 with Razorpay →',
+    otpLabel:'GST Portal OTP', sandboxOtp:'Sandbox mode: use OTP 575757',
+    fileNow:'🚀 File GST Return Now', secured:'🔒 Secured via WhiteBooks GSP · GSTN Licensed',
+    filedSuccess:'Filed Successfully!',
+    submittedVia:'Your GST return has been submitted to GSTN via WhiteBooks GSP',
+    arnLabel:'ARN Number', filedOn:'Filed On', taxPaidGovt:'Tax Paid to Govt', status:'Status',
+    saveArn:'Save your ARN number. Check status anytime on gst.gov.in',
+    downloadAck:'📄 Download Acknowledgement', fileAnother:'📋 File Another Return',
+    gotIt:'Got it! ✓', trackTitle:'My Returns', trackDesc:'All your filed GST returns in one place',
+    trackLabel:'Enter mobile to see filings', search:'Search',
+    enterMobile:'Enter your mobile number to see all your GST filing history.',
+    filed:'FILED', nextFee:'NEXT FEE', taxPaid:'TAX PAID',
+    learnTitle:'Learn GST — A to Z', learnSubtitle:'Simple language · No jargon · Perfect for beginners',
+    needHelp:'Need help? We\'re here!',
+    helpDesc:'If you\'re confused about anything, call or WhatsApp us. We will guide you for free!',
+    whatsappUs:'WhatsApp Us', whatsappDesc:'Quick reply · Free guidance',
+    watchVideo:'Watch How-To Videos', videoDesc:'Step by step video guide in your language',
+    whatGst:'What is GST?', whatGstDesc:'Basic intro — what it is and why it exists',
+    howReg:'How to Register for GST', howRegDesc:'Step-by-step registration guide',
+    howPay:'How to Pay GST to Government', howPayDesc:'Step-by-step payment guide',
+    typesRet:'Types of GST Returns', typesRetDesc:'GSTR-1, 3B, 4, 9 explained simply',
+    itcTitle:'Input Tax Credit (ITC)', itcDesc:'How to save money on your taxes',
+    penTitle:'Late Filing Penalties', penDesc:'How to avoid fines',
+    ewayTitle:'E-Way Bill', ewayDesc:'When and how to generate',
+  },
+  hi: {
+    heroAccent:'सरल. तेज़. केवल ₹199.',
+    heroDesc:'कोई CA नहीं चाहिए। कोई उलझन नहीं। 5 मिनट में GST रिटर्न फाइल करें!',
+    startFiling:'🚀 फाइलिंग शुरू करें — मुफ़्त', calculator:'🔢 कैलकुलेटर',
+    firstFiling:'पहली फाइलिंग', perFiling:'प्रति फाइलिंग', avgTime:'औसत समय',
+    easyTitle:'GST नया है? यहाँ से शुरू करें!',
+    easyDesc:'हमने फाइलिंग बिल्कुल आसान बना दी है। बस हमारे गाइड को फॉलो करें!',
+    guideMe:'चरण दर चरण गाइड करें', callHelp:'मदद चाहिए? कॉल करें',
+    freeAlert:'पहली GST फाइलिंग 100% मुफ़्त!', freeAlertSub:'कोई क्रेडिट कार्ड नहीं। कोई छुपा शुल्क नहीं।',
+    howPayWorks:'💡 भुगतान कैसे होता है — बहुत सरल',
+    govt:'सरकार', govtDesc:'जैसे ₹9,000 → सीधे GST पोर्टल पर जमा',
+    gstmitra:'GSTMitra', gstmitraDesc:'आपका रिटर्न फाइल करने की सेवा शुल्क',
+    whatYouCan:'आप क्या कर सकते हैं',
+    gstr1:'GSTR-1 फाइल करें', gstr1Desc:'बिक्री रिटर्न · 11 तारीख तक',
+    gstr3b:'GSTR-3B फाइल करें', gstr3bDesc:'सारांश + कर · 20 तारीख तक',
+    gstCalc:'GST कैलकुलेटर', gstCalcDesc:'तुरंत गणना',
+    learnGst:'GST सीखें A-Z', learnGstDesc:'सरल गाइड',
+    myReturns:'मेरे रिटर्न', myReturnsDesc:'फाइलिंग इतिहास',
+    helpSupport:'मदद और सहायता', helpSupportDesc:'WhatsApp / कॉल',
+    howWorks:'📋 यह कैसे काम करता है',
+    step1Title:'अपना GSTIN दर्ज करें', step1Desc:'आपका 15 अंकों का GST नंबर। हम तुरंत सत्यापित करेंगे।',
+    step2Title:'अपनी बिक्री दर्ज करें', step2Desc:'आपने कितना बेचा। हम कर स्वतः कैलकुलेट करेंगे।',
+    step3Title:'सरकार को GST कर दें', step3Desc:'हम राशि बताएंगे। आप GST पोर्टल पर दें।',
+    step4Title:'₹199 दें और फाइल करें', step4Desc:'हम रिटर्न फाइल करेंगे। ARN नंबर तुरंत मिलेगा।',
+    pricing:'💰 मूल्य', firstFree:'पहली फाइलिंग — मुफ़्त',
+    firstFreeDesc:'आपका पहला GST रिटर्न — बिल्कुल मुफ़्त',
+    fileForFree:'मुफ़्त में फाइल करें →', afterFirst:'पहली के बाद',
+    paidDesc:'सभी रिटर्न प्रकार · असीमित चालान',
+    taxSeparate:'GST कर सरकार को अलग से दिया जाएगा',
+    getStarted:'शुरू करें →',
+    dueDates:'📅 GST नियत तारीखें', return:'रिटर्न', who:'कौन', due:'देय तारीख',
+    allTax:'सभी करदाता', composition:'कम्पोजिशन', annual:'वार्षिक',
+    home:'होम', calc:'कैलकुलेटर', file:'GST फाइल', track:'मेरे रिटर्न', learn:'सीखें',
+    calcTitle:'GST कैलकुलेटर', calcDesc:'किसी भी राशि की तुरंत गणना',
+    amountLabel:'राशि (₹)', amountHint:'वह राशि दर्ज करें जिस पर GST कैलकुलेट करना है',
+    gstRateLabel:'GST दर — चुनें', calcType:'प्रकार',
+    addGst:'मेरी कीमत पर GST जोड़ें', removeGst:'कीमत में GST पहले से शामिल है',
+    breakdown:'📊 GST विवरण', baseAmt:'मूल राशि', totalAmt:'💰 कुल राशि',
+    rateGuide:'कौन सी दर किस पर लागू होती है?',
+    rate0:'चावल, गेहूं, दूध, अंडे, सब्जियां, किताबें',
+    rate5:'पैक्ड फूड, ₹1000 से कम जूते, इकोनॉमी उड़ान',
+    rate12:'प्रसंस्कृत भोजन, बिजनेस यात्रा',
+    rate18:'अधिकांश सेवाएं, रेस्तरां, होटल, इलेक्ट्रॉनिक्स',
+    rate28:'लग्जरी कार, तंबाकू, कोल्ड ड्रिंक',
+    fileTitle:'GST रिटर्न फाइल करें', fileDesc:'चरणों का पालन करें — हम हर कदम पर गाइड करेंगे',
+    firstFreeAlert:'पहली फाइलिंग मुफ़्त!', noPayment:'आज आपसे कोई भुगतान नहीं।',
+    sGstin:'GSTIN', sReturn:'रिटर्न', sSales:'बिक्री', sPayGovt:'सरकार दें', sReview:'समीक्षा', sFile:'फाइल',
+    s1Title:'चरण 1 — आपका GSTIN', s1Desc:'आपका 15 अक्षरों का GST पहचान नंबर',
+    whereGstin:'📍 GSTIN कहाँ मिलेगा?',
+    whereGstinDesc:'GST पंजीकरण प्रमाणपत्र पर, या gst.gov.in → My Profile। जैसे: 29ABCDE1234F1Z5',
+    gstinLabel:'आपका GSTIN', gstinHint:'15 अक्षर: राज्य कोड + PAN + एंटिटी + चेक अंक',
+    stateCode:'राज्य कोड', yourPan:'आपका PAN', checkDigit:'चेक अंक',
+    gstinVerified:'✅ GSTIN सत्यापित!', verifyBtn:'सत्यापित करें और जारी रखें →',
+    mobileLabel:'मोबाइल नंबर', mobileHint:'OTP सत्यापन के लिए',
+    testing:'परीक्षण?', testGstin:'GSTIN उपयोग करें: 33AAGCB1286Q1ZB और कोई भी 10 अंक',
+    s2Title:'चरण 2 — कौन सा रिटर्न?', s2Desc:'सुनिश्चित नहीं? अधिकांश व्यवसाय GSTR-3B का उपयोग करते हैं।',
+    gstr1RetDesc:'महीने की अपनी सभी बिक्री की रिपोर्ट करें',
+    gstr3bRetDesc:'बिक्री का सारांश + GST कर का भुगतान',
+    gstr4Desc:'कम्पोजिशन योजना पर छोटे व्यवसायों के लिए',
+    mostUsed:'सबसे अधिक', monthly:'मासिक', annual2:'वार्षिक', back:'← वापस', continue:'जारी रखें →',
+    s3Title:'चरण 3 — आपकी बिक्री', s3Desc:'GST से पहले राशि दर्ज करें। हम कर स्वतः कैलकुलेट करेंगे।',
+    monthLabel:'महीना', salesTip:'💡 GST से पहले की कीमत दर्ज करें। हम कर स्वतः जोड़ेंगे।',
+    b2bLabel:'🏪 B2B बिक्री — व्यवसायों को बेची',
+    b2cLabel:'🛒 B2C बिक्री — ग्राहकों को बेची',
+    nilLabel:'📦 शून्य/छूट — बिना GST की वस्तुएं',
+    itcLabel:'💡 ITC — आपकी खरीद पर दिया GST (कर कम करता है)',
+    amtLabel:'राशि (₹)', rateLabel:'GST दर',
+    autoCalc:'🧮 स्वतः गणना', totalSales:'कुल बिक्री',
+    cgstCol:'CGST एकत्रित', sgstCol:'SGST एकत्रित', itcClaim:'ITC दावा',
+    payGovt:'💸 सरकार को देय', nextPayGovt:'अगला: सरकार को दें →',
+    s4Title:'🏛️ चरण 4 — सरकार को GST कर दें',
+    s4Desc:'फाइलिंग से पहले सरकार को यह राशि दें। GSTMitra यह पैसा नहीं लेती।',
+    netPayable:'यह सरकार को देय आपका शुद्ध GST है',
+    gs1:'नीचे बटन क्लिक करें — GST पोर्टल नए टैब में खुलेगा',
+    gs2:'अपने GSTIN और पासवर्ड से लॉगिन करें',
+    gs3:'जाएं: Services → Payments → Create Challan',
+    gs4:'UPI / Net Banking / Card से भुगतान करें',
+    gs5:'वापस आएं → नीचे स्विच चालू करें → फाइलिंग जारी रखें',
+    openGstPortal:'🏛️ GST पोर्टल खोलें और भुगतान करें →',
+    waitingPayment:'⏳ प्रतीक्षा — पहले GST पोर्टल पर भुगतान करें...',
+    iPaid:'मैंने दिए', toGovt:'सरकार को',
+    toggleAfter:'GST पोर्टल पर भुगतान के बाद स्विच चालू करें',
+    confirmReview:'पुष्टि करें और समीक्षा करें →',
+    zeroTax:'कर ₹0 है? ITC सब कवर करता है — स्विच चालू करें और जारी रखें!',
+    s5Title:'चरण 5 — सब कुछ जांचें', noErrors:'✅ कोई त्रुटि नहीं। आपका रिटर्न फाइल के लिए तैयार है!',
+    gstinLabel2:'GSTIN', returnType:'रिटर्न प्रकार', periodLabel:'अवधि',
+    paidGovt:'🏛️ सरकार को दिया', gstmitraFee:'💰 GSTMitra शुल्क',
+    confirmDetails:'सभी विवरण सही हैं', wrongPenalty:'गलत रिटर्न = ₹50/दिन जुर्माना',
+    payFile:'भुगतान करें और फाइल करें →',
+    s6Title:'चरण 6 — ₹199 दें और फाइल करें',
+    freeFiling:'मुफ़्त फाइलिंग!', noServiceFee:'पहले रिटर्न के लिए कोई सेवा शुल्क नहीं।',
+    serviceFeeLabel:'GSTMitra सेवा शुल्क', serviceFeeDesc:'आपका GST रिटर्न पेशेवर रूप से फाइल करने के लिए',
+    netBanking:'नेट बैंकिंग', payRazorpay:'💳 Razorpay से ₹199 दें →',
+    otpLabel:'GST पोर्टल OTP', sandboxOtp:'Sandbox मोड: OTP 575757 उपयोग करें',
+    fileNow:'🚀 अभी GST रिटर्न फाइल करें', secured:'🔒 WhiteBooks GSP द्वारा सुरक्षित',
+    filedSuccess:'सफलतापूर्वक फाइल हो गया!',
+    submittedVia:'आपका GST रिटर्न WhiteBooks GSP के माध्यम से GSTN को जमा किया गया',
+    arnLabel:'ARN नंबर', filedOn:'फाइल की तारीख', taxPaidGovt:'सरकार को भुगतान', status:'स्थिति',
+    saveArn:'ARN नंबर सेव करें। gst.gov.in पर कभी भी स्थिति जांचें।',
+    downloadAck:'📄 पावती डाउनलोड करें', fileAnother:'📋 और रिटर्न फाइल करें',
+    gotIt:'समझ गया! ✓', trackTitle:'मेरे रिटर्न', trackDesc:'एक जगह पर आपके सभी GST रिटर्न',
+    trackLabel:'फाइलिंग देखने के लिए मोबाइल दर्ज करें', search:'खोजें',
+    enterMobile:'अपने GST फाइलिंग इतिहास के लिए मोबाइल नंबर दर्ज करें।',
+    filed:'फाइल किए', nextFee:'अगली फीस', taxPaid:'कर चुकाया',
+    learnTitle:'GST सीखें — A से Z', learnSubtitle:'सरल भाषा · कोई जटिल शब्द नहीं',
+    needHelp:'मदद चाहिए? हम यहाँ हैं!',
+    helpDesc:'किसी भी चीज़ में उलझन हो तो कॉल या WhatsApp करें। हम मुफ़्त में गाइड करेंगे!',
+    whatsappUs:'WhatsApp करें', whatsappDesc:'त्वरित उत्तर · मुफ़्त मार्गदर्शन',
+    watchVideo:'How-To वीडियो देखें', videoDesc:'अपनी भाषा में चरण दर चरण वीडियो गाइड',
+    whatGst:'GST क्या है?', whatGstDesc:'परिचय — यह क्या है और क्यों है',
+    howReg:'GST के लिए कैसे पंजीकरण करें', howRegDesc:'चरण दर चरण पंजीकरण गाइड',
+    howPay:'सरकार को GST कैसे दें', howPayDesc:'चरण दर चरण भुगतान गाइड',
+    typesRet:'GST रिटर्न के प्रकार', typesRetDesc:'GSTR-1, 3B, 4, 9 सरल में समझाया',
+    itcTitle:'इनपुट टैक्स क्रेडिट (ITC)', itcDesc:'कर पर पैसे कैसे बचाएं',
+    penTitle:'देरी से फाइलिंग पर जुर्माना', penDesc:'जुर्माने से कैसे बचें',
+    ewayTitle:'ई-वे बिल', ewayDesc:'कब और कैसे बनाएं',
+  },
+  kn: {
+    heroAccent:'ಸರಳ. ವೇಗ. ಕೇವಲ ₹199.',
+    heroDesc:'CA ಅಗತ್ಯವಿಲ್ಲ. ಗೊಂದಲದ ಫಾರ್ಮ್ ಇಲ್ಲ. 5 ನಿಮಿಷದಲ್ಲಿ GST ಸಲ್ಲಿಸಿ!',
+    startFiling:'🚀 ಸಲ್ಲಿಕೆ ಪ್ರಾರಂಭಿಸಿ — ಉಚಿತ', calculator:'🔢 ಕ್ಯಾಲ್ಕುಲೇಟರ್',
+    firstFiling:'ಮೊದಲ ಸಲ್ಲಿಕೆ', perFiling:'ಪ್ರತಿ ಸಲ್ಲಿಕೆ', avgTime:'ಸರಾಸರಿ ಸಮಯ',
+    easyTitle:'GST ಹೊಸದೇ? ಇಲ್ಲಿಂದ ಪ್ರಾರಂಭಿಸಿ!',
+    easyDesc:'ನಾವು ಸಲ್ಲಿಕೆಯನ್ನು ತುಂಬಾ ಸರಳಗೊಳಿಸಿದ್ದೇವೆ!',
+    guideMe:'ಹಂತ ಹಂತವಾಗಿ ಮಾರ್ಗದರ್ಶಿ', callHelp:'ಸಹಾಯ ಬೇಕೇ? ಕರೆ ಮಾಡಿ',
+    freeAlert:'ಮೊದಲ GST ಸಲ್ಲಿಕೆ 100% ಉಚಿತ!', freeAlertSub:'ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ ಇಲ್ಲ. ಮರೆಮಾಚಿದ ಶುಲ್ಕ ಇಲ್ಲ.',
+    howPayWorks:'💡 ಪಾವತಿ ಹೇಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ',
+    govt:'ಸರ್ಕಾರ', govtDesc:'ಉದಾ. ₹9,000 → ನೇರವಾಗಿ GST ಪೋರ್ಟಲ್‌ಗೆ',
+    gstmitra:'GSTMitra', gstmitraDesc:'ನಿಮ್ಮ ರಿಟರ್ನ್ ಸಲ್ಲಿಸಲು ಸೇವಾ ಶುಲ್ಕ',
+    whatYouCan:'ನೀವು ಏನು ಮಾಡಬಹುದು',
+    gstr1:'GSTR-1 ಸಲ್ಲಿಸಿ', gstr1Desc:'ಮಾರಾಟ ರಿಟರ್ನ್ · 11ನೇ ತಾ.',
+    gstr3b:'GSTR-3B ಸಲ್ಲಿಸಿ', gstr3bDesc:'ಸಾರಾಂಶ + ತೆರಿಗೆ · 20ನೇ ತಾ.',
+    gstCalc:'GST ಕ್ಯಾಲ್ಕುಲೇಟರ್', gstCalcDesc:'ತಕ್ಷಣ ಲೆಕ್ಕ',
+    learnGst:'GST ಕಲಿಯಿರಿ A-Z', learnGstDesc:'ಸರಳ ಮಾರ್ಗದರ್ಶಿ',
+    myReturns:'ನನ್ನ ರಿಟರ್ನ್‌ಗಳು', myReturnsDesc:'ಸಲ್ಲಿಕೆ ಇತಿಹಾಸ',
+    helpSupport:'ಸಹಾಯ ಮತ್ತು ಬೆಂಬಲ', helpSupportDesc:'WhatsApp / ಕರೆ',
+    home:'ಮನೆ', calc:'ಕ್ಯಾಲ್ಕುಲೇಟರ್', file:'GST ಸಲ್ಲಿಸಿ', track:'ನನ್ನ ರಿಟರ್ನ್', learn:'ಕಲಿಯಿರಿ',
+    back:'← ಹಿಂದೆ', continue:'ಮುಂದುವರಿಯಿರಿ →', gotIt:'ಅರ್ಥವಾಯಿತು! ✓',
+    search:'ಹುಡುಕಿ', fileNow:'🚀 GST ರಿಟರ್ನ್ ಸಲ್ಲಿಸಿ',
+    filedSuccess:'ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ!',
+    fileForFree:'ಉಚಿತವಾಗಿ ಸಲ್ಲಿಸಿ →', getStarted:'ಪ್ರಾರಂಭಿಸಿ →',
+    needHelp:'ಸಹಾಯ ಬೇಕೇ? ನಾವು ಇಲ್ಲಿದ್ದೇವೆ!',
+    whatsappUs:'WhatsApp ಮಾಡಿ', watchVideo:'ವೀಡಿಯೊ ನೋಡಿ',
+    whatGst:'GST ಎಂದರೇನು?', howReg:'GST ನೋಂದಣಿ ಹೇಗೆ', howPay:'ಸರ್ಕಾರಕ್ಕೆ ಹೇಗೆ ಪಾವತಿಸುವುದು',
+    typesRet:'GST ರಿಟರ್ನ್ ವಿಧಗಳು', itcTitle:'ಇನ್‌ಪುಟ್ ತೆರಿಗೆ ಕ್ರೆಡಿಟ್',
+    penTitle:'ತಡ ಸಲ್ಲಿಕೆ ದಂಡ', ewayTitle:'ಇ-ವೇ ಬಿಲ್',
+    openGstPortal:'🏛️ GST ಪೋರ್ಟಲ್ ತೆರೆಯಿರಿ →',
+    payRazorpay:'💳 Razorpay ಮೂಲಕ ₹199 ಪಾವತಿಸಿ →',
+    fileAnother:'📋 ಇನ್ನೊಂದು ರಿಟರ್ನ್ ಸಲ್ಲಿಸಿ',
+  },
+  ta: {
+    heroAccent:'எளிமை. வேகம். வெறும் ₹199.',
+    heroDesc:'CA தேவையில்லை. குழப்பமான படிவங்கள் இல்லை. 5 நிமிடத்தில் GST தாக்கல் செய்யுங்கள்!',
+    startFiling:'🚀 தாக்கல் தொடங்கு — இலவசம்', calculator:'🔢 கணிப்பான்',
+    firstFiling:'முதல் தாக்கல்', perFiling:'ஒவ்வொரு தாக்கலுக்கும்', avgTime:'சராசரி நேரம்',
+    easyTitle:'GST புதிதா? இங்கே தொடங்குங்கள்!',
+    easyDesc:'தாக்கலை மிகவும் எளிதாக்கியுள்ளோம்!',
+    guideMe:'படிப்படியாக வழிகாட்டு', callHelp:'உதவி வேணுமா? அழைக்கவும்',
+    freeAlert:'முதல் GST தாக்கல் 100% இலவசம்!', freeAlertSub:'கிரெடிட் கார்டு இல்லை. மறைக்கப்பட்ட கட்டணம் இல்லை.',
+    home:'முகப்பு', calc:'கணிப்பான்', file:'GST தாக்கல்', track:'என் தாக்கல்கள்', learn:'கற்க',
+    back:'← பின்', continue:'தொடர்க →', gotIt:'புரிந்தது! ✓',
+    search:'தேடு', fileNow:'🚀 GST தாக்கல் செய்யுங்கள்',
+    filedSuccess:'வெற்றிகரமாக தாக்கல் செய்யப்பட்டது!',
+    fileForFree:'இலவசமாக தாக்கல் →', getStarted:'தொடங்குங்கள் →',
+    needHelp:'உதவி வேண்டுமா? நாங்கள் இங்கே இருக்கிறோம்!',
+    whatsappUs:'WhatsApp செய்யுங்கள்', watchVideo:'வீடியோ பாருங்கள்',
+    whatGst:'GST என்றால் என்ன?', howReg:'GST பதிவு எப்படி',
+    howPay:'அரசாங்கத்திற்கு எப்படி செலுத்துவது',
+    typesRet:'GST தாக்கல் வகைகள்', itcTitle:'உள்ளீட்டு வரி கடன் (ITC)',
+    penTitle:'தாமதமான தாக்கல் அபராதம்', ewayTitle:'இ-வே பில்',
+    openGstPortal:'🏛️ GST போர்டல் திறக்க →',
+    payRazorpay:'💳 Razorpay மூலம் ₹199 செலுத்து →',
+    fileAnother:'📋 மற்றொரு தாக்கல்',
+  },
+  te: {
+    heroAccent:'సరళం. వేగం. కేవలం ₹199.',
+    heroDesc:'CA అవసరం లేదు. గందరగోళ ఫారాలు లేవు. 5 నిమిషాల్లో GST దాఖలు చేయండి!',
+    startFiling:'🚀 దాఖలు ప్రారంభించు — ఉచితం', calculator:'🔢 కాల్కులేటర్',
+    firstFiling:'మొదటి దాఖలు', perFiling:'ప్రతి దాఖలుకు', avgTime:'సగటు సమయం',
+    easyTitle:'GST కొత్తదా? ఇక్కడ ప్రారంభించండి!',
+    easyDesc:'దాఖలును చాలా సులభంగా చేశాము!',
+    guideMe:'దశల వారీగా గైడ్ చేయండి', callHelp:'సహాయం కావాలా? కాల్ చేయండి',
+    freeAlert:'మొదటి GST దాఖలు 100% ఉచితం!', freeAlertSub:'క్రెడిట్ కార్డ్ లేదు. దాచిన రుసుమూ లేదు.',
+    home:'హోమ్', calc:'కాల్కులేటర్', file:'GST దాఖలు', track:'నా రిటర్న్లు', learn:'నేర్చుకో',
+    back:'← వెనక్కి', continue:'కొనసాగించు →', gotIt:'అర్థమైంది! ✓',
+    search:'వెతుకు', fileNow:'🚀 GST రిటర్న్ దాఖలు చేయండి',
+    filedSuccess:'విజయవంతంగా దాఖలు చేయబడింది!',
+    fileForFree:'ఉచితంగా దాఖలు →', getStarted:'ప్రారంభించండి →',
+    needHelp:'సహాయం కావాలా? మేము ఇక్కడున్నాం!',
+    whatsappUs:'WhatsApp చేయండి', watchVideo:'వీడియో చూడండి',
+    whatGst:'GST అంటే ఏమిటి?', howReg:'GST నమోదు ఎలా',
+    howPay:'ప్రభుత్వానికి ఎలా చెల్లించాలి',
+    typesRet:'GST రిటర్న్ రకాలు', itcTitle:'ఇన్‌పుట్ టాక్స్ క్రెడిట్',
+    penTitle:'ఆలస్య దాఖలు జరిమానా', ewayTitle:'ఈ-వే బిల్',
+    openGstPortal:'🏛️ GST పోర్టల్ తెరవండి →',
+    payRazorpay:'💳 Razorpay ద్వారా ₹199 చెల్లించండి →',
+    fileAnother:'📋 మరొక రిటర్న్ దాఖలు',
+  },
+  mr: {
+    heroAccent:'सोपे. जलद. फक्त ₹199.',
+    heroDesc:'CA नको. गुंतागुंतीचे फॉर्म नको. 5 मिनिटांत GST दाखल करा!',
+    startFiling:'🚀 दाखल करणे सुरू करा — मोफत', calculator:'🔢 कॅल्क्युलेटर',
+    firstFiling:'पहिली दाखल', perFiling:'प्रति दाखल', avgTime:'सरासरी वेळ',
+    easyTitle:'GST नवीन आहे? इथून सुरू करा!',
+    easyDesc:'आम्ही दाखल करणे खूप सोपे केले आहे!',
+    guideMe:'पायरी पायरीने मार्गदर्शन', callHelp:'मदत हवी आहे? कॉल करा',
+    freeAlert:'पहिली GST दाखल 100% मोफत!', freeAlertSub:'क्रेडिट कार्ड नाही. लपविलेले शुल्क नाही.',
+    home:'मुख्यपृष्ठ', calc:'कॅल्क्युलेटर', file:'GST दाखल', track:'माझे रिटर्न', learn:'शिका',
+    back:'← मागे', continue:'पुढे →', gotIt:'समजले! ✓',
+    search:'शोधा', fileNow:'🚀 GST रिटर्न दाखल करा',
+    filedSuccess:'यशस्वीरित्या दाखल झाले!',
+    fileForFree:'मोफत दाखल करा →', getStarted:'सुरू करा →',
+    needHelp:'मदत हवी आहे? आम्ही इथे आहोत!',
+    whatsappUs:'WhatsApp करा', watchVideo:'व्हिडिओ पहा',
+    whatGst:'GST म्हणजे काय?', howReg:'GST नोंदणी कशी करावी',
+    howPay:'सरकारला GST कसे द्यावे',
+    typesRet:'GST रिटर्नचे प्रकार', itcTitle:'इनपुट टॅक्स क्रेडिट (ITC)',
+    penTitle:'उशिरा दाखल दंड', ewayTitle:'ई-वे बिल',
+    openGstPortal:'🏛️ GST पोर्टल उघडा →',
+    payRazorpay:'💳 Razorpay द्वारे ₹199 द्या →',
+    fileAnother:'📋 दुसरे रिटर्न दाखल करा',
+  },
+  gu: {
+    heroAccent:'સરળ. ઝડપી. માત્ર ₹199.',
+    heroDesc:'CA ની જરૂર નથી. ગૂંચવણ ભરેલા ફોર્મ નથી. 5 મિનિટમાં GST ફાઇલ કરો!',
+    startFiling:'🚀 ફાઇલ કરવાનું શરૂ કરો — મફત', calculator:'🔢 કૅલ્ક્યુલેટર',
+    home:'હોમ', calc:'કૅલ્ક્યુલેટર', file:'GST ફાઇલ', track:'મારા રિટર્ન', learn:'શીખો',
+    back:'← પાછળ', continue:'આગળ →', gotIt:'સમજાઈ ગયું! ✓',
+    search:'શોધો', fileNow:'🚀 GST રિટર્ન ફાઇલ કરો',
+    filedSuccess:'સફળતાપૂર્વક ફાઇલ થઈ!',
+    fileForFree:'મફત ફાઇલ કરો →', getStarted:'શરૂ કરો →',
+    needHelp:'મદદ જોઈએ છે? અમે અહીં છીએ!',
+    openGstPortal:'🏛️ GST પોર્ટલ ખોલો →',
+    payRazorpay:'💳 Razorpay દ્વારા ₹199 ચૂકવો →',
+  },
+  bn: {
+    heroAccent:'সহজ। দ্রুত। মাত্র ₹199।',
+    heroDesc:'CA দরকার নেই। জটিল ফর্ম নেই। 5 মিনিটে GST ফাইল করুন!',
+    startFiling:'🚀 ফাইলিং শুরু করুন — বিনামূল্যে', calculator:'🔢 ক্যালকুলেটর',
+    home:'হোম', calc:'ক্যালকুলেটর', file:'GST ফাইল', track:'আমার রিটার্ন', learn:'শিখুন',
+    back:'← পিছনে', continue:'পরবর্তী →', gotIt:'বুঝলাম! ✓',
+    search:'খুঁজুন', fileNow:'🚀 GST রিটার্ন ফাইল করুন',
+    filedSuccess:'সফলভাবে ফাইল করা হয়েছে!',
+    fileForFree:'বিনামূল্যে ফাইল করুন →', getStarted:'শুরু করুন →',
+    needHelp:'সাহায্য দরকার? আমরা এখানে আছি!',
+    openGstPortal:'🏛️ GST পোর্টাল খুলুন →',
+    payRazorpay:'💳 Razorpay দিয়ে ₹199 দিন →',
+  },
+  pa: {
+    heroAccent:'ਸਰਲ। ਤੇਜ਼। ਸਿਰਫ਼ ₹199।',
+    heroDesc:'CA ਦੀ ਲੋੜ ਨਹੀਂ। ਉਲਝੇ ਫਾਰਮ ਨਹੀਂ। 5 ਮਿੰਟਾਂ ਵਿੱਚ GST ਦਾਖਲ ਕਰੋ!',
+    startFiling:'🚀 ਦਾਖਲ ਕਰਨਾ ਸ਼ੁਰੂ ਕਰੋ — ਮੁਫ਼ਤ', calculator:'🔢 ਕੈਲਕੁਲੇਟਰ',
+    home:'ਹੋਮ', calc:'ਕੈਲਕੁਲੇਟਰ', file:'GST ਦਾਖਲ', track:'ਮੇਰੇ ਰਿਟਰਨ', learn:'ਸਿੱਖੋ',
+    back:'← ਵਾਪਸ', continue:'ਅੱਗੇ →', gotIt:'ਸਮਝ ਗਿਆ! ✓',
+    search:'ਖੋਜੋ', fileNow:'🚀 GST ਰਿਟਰਨ ਦਾਖਲ ਕਰੋ',
+    filedSuccess:'ਸਫਲਤਾਪੂਰਵਕ ਦਾਖਲ ਹੋਇਆ!',
+    fileForFree:'ਮੁਫ਼ਤ ਦਾਖਲ ਕਰੋ →', getStarted:'ਸ਼ੁਰੂ ਕਰੋ →',
+    needHelp:'ਮਦਦ ਚਾਹੀਦੀ ਹੈ? ਅਸੀਂ ਇੱਥੇ ਹਾਂ!',
+    openGstPortal:'🏛️ GST ਪੋਰਟਲ ਖੋਲੋ →',
+    payRazorpay:'💳 Razorpay ਨਾਲ ₹199 ਦਿਓ →',
+  },
+  ml: {
+    heroAccent:'ലളിതം. വേഗം. വെറും ₹199.',
+    heroDesc:'CA ആവശ്യമില്ല. ആശയക്കുഴപ്പം ഇല്ല. 5 മിനിറ്റിൽ GST ഫയൽ ചെയ്യൂ!',
+    startFiling:'🚀 ഫൈൽ ചെയ്യൽ ആരംഭിക്കൂ — സൌജന്യം', calculator:'🔢 കാൽക്കുലേറ്റർ',
+    home:'ഹോം', calc:'കാൽക്കുലേറ്റർ', file:'GST ഫൈൽ', track:'എന്റെ റിട്ടേണുകൾ', learn:'പഠിക്കൂ',
+    back:'← തിരിച്ച്', continue:'തുടരൂ →', gotIt:'മനസ്സിലായി! ✓',
+    search:'തിരയൂ', fileNow:'🚀 GST റിട്ടേൺ ഫൈൽ ചെയ്യൂ',
+    filedSuccess:'വിജയകരമായി ഫൈൽ ചെയ്തു!',
+    fileForFree:'സൌജന്യമായി ഫൈൽ →', getStarted:'ആരംഭിക്കൂ →',
+    needHelp:'സഹായം വേണോ? ഞങ്ങൾ ഇവിടെ!',
+    openGstPortal:'🏛️ GST പോർട്ടൽ തുറക്കൂ →',
+    payRazorpay:'💳 Razorpay വഴി ₹199 നൽകൂ →',
+  },
+  or: {
+    heroAccent:'ସରଳ। ଦ୍ରୁତ। ମାତ୍ର ₹199।',
+    heroDesc:'CA ଦରକାର ନାହିଁ। ଜଟିଳ ଫର୍ମ ନାହିଁ। 5 ମିନିଟ୍‌ରେ GST ଦାଖଲ କରନ୍ତୁ!',
+    startFiling:'🚀 ଦାଖଲ ଆରମ୍ଭ କରନ୍ତୁ — ମୁଫ୍ତ', calculator:'🔢 ହିସାବ ଯନ୍ତ୍ର',
+    home:'ମୁଖ୍ୟ', calc:'ହିସାବ', file:'GST ଦାଖଲ', track:'ମୋ ରିଟର୍ନ', learn:'ଶିଖ',
+    back:'← ପଛକୁ', continue:'ଆଗକୁ →', gotIt:'ବୁଝିଲି! ✓',
+    search:'ଖୋଜ', fileNow:'🚀 GST ରିଟର୍ନ ଦାଖଲ',
+    filedSuccess:'ସଫଳତାର ସହ ଦାଖଲ ହେଲା!',
+    fileForFree:'ମୁଫ୍ତ ଦାଖଲ →', getStarted:'ଆରମ୍ଭ →',
+    needHelp:'ସାହାଯ୍ୟ ଦରକାର? ଆମେ ଇଠି!',
+    openGstPortal:'🏛️ GST ପୋର୍ଟାଲ ଖୋଲ →',
+    payRazorpay:'💳 Razorpay ଦ୍ୱାରା ₹199 →',
+  }
+};
+
+// LANGUAGE SYSTEM
+function setLang(lang){
+  curLang=lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    if(b.onclick&&b.onclick.toString().includes("'"+lang+"'"))b.classList.add('on');
+  });
+  const translations=T[lang]||T['en'];
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const key=el.getAttribute('data-t');
+    if(translations[key])el.textContent=translations[key];
+  });
+  // Update select options
+  const addGstEl=document.querySelector('[data-t="addGst"]');
+  const removeGstEl=document.querySelector('[data-t="removeGst"]');
+  if(addGstEl&&translations.addGst)addGstEl.textContent=translations.addGst;
+  if(removeGstEl&&translations.removeGst)removeGstEl.textContent=translations.removeGst;
+  document.documentElement.lang=lang;
 }
 
-function onGSTIN(){const g=document.getElementById('gstin').value.trim();const box=document.getElementById('gstin-ok');if(g.length===15){const sd=SB[g];if(sd){document.getElementById('gstin-info-txt').innerHTML=`🏢 <strong>${sd.name}</strong><br>📍 ${sd.state} · ${sd.type} Taxpayer · ✅ Active`;box.style.display='block';}else if(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(g)){document.getElementById('gstin-info-txt').textContent='✅ Valid GSTIN format. Will verify via WhiteBooks GSP.';box.style.display='block';}else box.style.display='none';}else box.style.display='none';}
+// PAGE NAVIGATION
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.bi').forEach(x=>x.classList.remove('on'));
+  const b=document.getElementById('bn-'+p);if(b)b.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
-function step1Next(){const g=document.getElementById('gstin').value.trim();const m=document.getElementById('mobile').value.trim();if(g.length!==15){document.getElementById('gstin').classList.add('err');alert('Please enter a valid 15-character GSTIN!');return;}if(m.length!==10){document.getElementById('mobile').classList.add('err');alert('Please enter your 10-digit mobile number!');return;}document.getElementById('gstin').classList.remove('err');document.getElementById('mobile').classList.remove('err');goStep(2);}
+// SANDBOX GSTINS
+const SB={
+  '33AAGCB1286Q1ZB':{name:'Test Business TN Pvt Ltd',state:'Tamil Nadu',type:'Regular'},
+  '27AAGCB1286Q1Z4':{name:'Test Business MH Pvt Ltd',state:'Maharashtra',type:'Regular'},
+  '33AAGCB1286Q2ZA':{name:'Test Co Tamil Nadu',state:'Tamil Nadu',type:'Regular'},
+  '27AAGCB1286Q2Z3':{name:'Test Co Maharashtra',state:'Maharashtra',type:'Regular'}
+};
 
-function selRet(r,el){selReturn=r;document.querySelectorAll('#s2 .fcard').forEach(c=>{c.style.borderColor='var(--bdr)';c.style.background='';});['chk-1','chk-2','chk-3'].forEach(id=>document.getElementById(id).style.display='none');el.style.borderColor='var(--g)';el.style.background='var(--gl)';const m={GSTR1:'chk-1','GSTR-3B':'chk-2','GSTR-4':'chk-3'};const ck={'GSTR-1':'chk-1','GSTR-3B':'chk-2','GSTR-4':'chk-3'};document.getElementById(ck[r]).style.display='inline';}
+function onGSTIN(){
+  const g=document.getElementById('gstin').value.trim();
+  const box=document.getElementById('gstin-ok');
+  if(g.length===15){
+    const sd=SB[g];
+    if(sd){
+      document.getElementById('gstin-info-txt').innerHTML=`🏢 <strong>${sd.name}</strong><br>📍 ${sd.state} · ${sd.type} · ✅ Active`;
+      box.style.display='block';
+    }else if(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(g)){
+      document.getElementById('gstin-info-txt').textContent='✅ Valid GSTIN format.';
+      box.style.display='block';
+    }else box.style.display='none';
+  }else box.style.display='none';
+}
 
-function updateSum(){const b2b=parseFloat(document.getElementById('b2b-val').value)||0;const b2c=parseFloat(document.getElementById('b2c-val').value)||0;const nil=parseFloat(document.getElementById('nil-val').value)||0;const b2br=parseFloat(document.getElementById('b2b-rate').value)/100;const b2cr=parseFloat(document.getElementById('b2c-rate').value)/100;const itcC=parseFloat(document.getElementById('itc-c').value)||0;const itcS=parseFloat(document.getElementById('itc-s').value)||0;const gst=b2b*b2br+b2c*b2cr;const itc=itcC+itcS;netGST=Math.max(0,gst-itc);const f=v=>'₹'+v.toFixed(2);document.getElementById('s-tax').textContent=f(b2b+b2c+nil);document.getElementById('s-cgst').textContent=f(gst/2);document.getElementById('s-sgst').textContent=f(gst/2);document.getElementById('s-itc').textContent='-'+f(itc);document.getElementById('s-net').textContent=f(netGST);}
+function step1Next(){
+  const g=document.getElementById('gstin').value.trim();
+  const m=document.getElementById('mobile').value.trim();
+  if(g.length!==15){document.getElementById('gstin').classList.add('err');alert('Please enter valid 15-character GSTIN!');return;}
+  if(m.length!==10){document.getElementById('mobile').classList.add('err');alert('Please enter valid 10-digit mobile number!');return;}
+  document.getElementById('gstin').classList.remove('err');
+  document.getElementById('mobile').classList.remove('err');
+  goStep(2);
+}
 
-function onGovtPaid(el){if(el.checked){document.getElementById('pay-st').className='pay-status ps-done';document.getElementById('pay-st').textContent='✅ Government payment confirmed! Ready to file.';document.getElementById('govt-next').disabled=false;}else{document.getElementById('pay-st').className='pay-status ps-pending';document.getElementById('pay-st').textContent='⏳ Waiting — please pay on GST portal first...';document.getElementById('govt-next').disabled=true;}}
+// STEP NAVIGATION
+function goStep(n){
+  if(n===6&&!document.getElementById('confirm-chk').checked){
+    alert('Please confirm the details are correct first — toggle the switch in Step 5!');return;
+  }
+  for(let i=1;i<=6;i++){const el=document.getElementById('s'+i);if(el)el.style.display='none';}
+  document.getElementById('s-done').style.display='none';
+  const el=document.getElementById('s'+n);
+  if(el){el.style.display='block';el.style.animation='fadeUp .3s ease';}
+  for(let i=1;i<=6;i++){
+    const c=document.getElementById('sc'+i);
+    if(i<n){c.className='sc done';c.textContent='✓';}
+    else if(i===n){c.className='sc on';c.textContent=i;}
+    else{c.className='sc';c.textContent=i;}
+    if(i<6)document.getElementById('sl'+i).className=i<n?'sl done':'sl';
+  }
+  document.getElementById('prog').style.width=Math.round(n/6*100)+'%';
+  if(n===4){
+    const a='₹'+netGST.toFixed(2);
+    document.getElementById('govt-amt').textContent=a;
+    document.getElementById('govt-amt-i').textContent=a;
+    document.getElementById('govt-c-amt').textContent=a;
+    if(netGST===0){document.getElementById('govt-chk').checked=true;onGovtPaid(document.getElementById('govt-chk'));}
+    else{document.getElementById('govt-next').disabled=true;}
+  }
+  if(n===5){
+    document.getElementById('rv-gstin').textContent=document.getElementById('gstin').value;
+    document.getElementById('rv-ret').textContent=selReturn;
+    document.getElementById('rv-per').textContent=document.getElementById('period').options[document.getElementById('period').selectedIndex].text;
+    document.getElementById('rv-govt').textContent='₹'+netGST.toFixed(2);
+    document.getElementById('rv-fee').textContent=filingCount===0?'FREE — ₹0':'₹'+FEE;
+  }
+  if(n===6){
+    const f=filingCount===0;
+    document.getElementById('s6-free').style.display=f?'flex':'none';
+    document.getElementById('s6-pay').style.display=f?'none':'block';
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function selRet(r,el){
+  selReturn=r;
+  document.querySelectorAll('#s2 .fcard').forEach(c=>{c.style.borderColor='var(--bdr)';c.style.background='';});
+  ['chk-1','chk-2','chk-3'].forEach(id=>document.getElementById(id).style.display='none');
+  el.style.borderColor='var(--g)';el.style.background='var(--gl)';
+  const ck={'GSTR-1':'chk-1','GSTR-3B':'chk-2','GSTR-4':'chk-3'};
+  document.getElementById(ck[r]).style.display='inline';
+}
+
+function updateSum(){
+  const b2b=parseFloat(document.getElementById('b2b-val').value)||0;
+  const b2c=parseFloat(document.getElementById('b2c-val').value)||0;
+  const nil=parseFloat(document.getElementById('nil-val').value)||0;
+  const b2br=parseFloat(document.getElementById('b2b-rate').value)/100;
+  const b2cr=parseFloat(document.getElementById('b2c-rate').value)/100;
+  const itcC=parseFloat(document.getElementById('itc-c').value)||0;
+  const itcS=parseFloat(document.getElementById('itc-s').value)||0;
+  const gst=b2b*b2br+b2c*b2cr;
+  const itc=itcC+itcS;
+  netGST=Math.max(0,gst-itc);
+  const f=v=>'₹'+v.toFixed(2);
+  document.getElementById('s-tax').textContent=f(b2b+b2c+nil);
+  document.getElementById('s-cgst').textContent=f(gst/2);
+  document.getElementById('s-sgst').textContent=f(gst/2);
+  document.getElementById('s-itc').textContent='-'+f(itc);
+  document.getElementById('s-net').textContent=f(netGST);
+}
+
+function onGovtPaid(el){
+  if(el.checked){
+    document.getElementById('pay-st').className='ps-d';
+    document.getElementById('pay-st').textContent='✅ Government payment confirmed! Ready to file.';
+    document.getElementById('govt-next').disabled=false;
+  }else{
+    document.getElementById('pay-st').className='ps-p';
+    document.getElementById('pay-st').textContent='⏳ Waiting — please pay on GST portal first...';
+    document.getElementById('govt-next').disabled=true;
+  }
+}
 
 function selPay(t,el){document.querySelectorAll('.popt').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
-function payFee(){alert(`💳 Razorpay Payment — ₹${FEE}\n\nTo activate real payments:\n1. Sign up at razorpay.com (free)\n2. Add your API keys to server.js\n3. ₹199 goes directly to your bank!\n\nFor now, proceeding in demo mode.`);}
+
+// RAZORPAY PAYMENT WITH YOUR REAL TEST KEY
+function payWithRazorpay(){
+  const mobile=document.getElementById('mobile').value||'9999999999';
+  const options={
+    key:RAZORPAY_KEY,
+    amount:FEE*100,
+    currency:'INR',
+    name:'GSTMitra',
+    description:'GST Filing Service Fee',
+    handler:function(response){
+      paymentDone=true;
+      alert('✅ Payment Successful!\n\nPayment ID: '+response.razorpay_payment_id+'\n\nNow enter your OTP to complete filing!');
+    },
+    prefill:{contact:mobile,email:'user@gstmitra.in'},
+    theme:{color:'#1A6B3C'},
+    modal:{ondismiss:function(){alert('Payment cancelled. Please pay ₹199 to complete filing.');}}
+  };
+  try{
+    const rzp=new Razorpay(options);rzp.open();
+  }catch(e){
+    alert('Razorpay test mode active!\nKey: '+RAZORPAY_KEY+'\nProceeding in demo mode.');
+    paymentDone=true;
+  }
+}
 
 async function fileReturn(){
   const otp=document.getElementById('gst-otp').value;
-  if(otp.length<4){document.getElementById('gst-otp').classList.add('err');alert('Please enter the OTP! (Sandbox: use 575757)');return;}
+  if(otp.length<4){document.getElementById('gst-otp').classList.add('err');alert('Please enter OTP! (Sandbox: use 575757)');return;}
+  if(filingCount>0&&!paymentDone){alert('Please complete ₹'+FEE+' payment first!');return;}
   const btn=document.getElementById('file-btn');
-  btn.innerHTML='<span class="spinner"></span>Filing via WhiteBooks GSP...';btn.disabled=true;
+  btn.innerHTML='<span class="sp"></span>Filing via WhiteBooks GSP...';btn.disabled=true;
   await new Promise(r=>setTimeout(r,2500));
-  filingCount++;
+  filingCount++;paymentDone=false;
   document.getElementById('s6').style.display='none';
   document.getElementById('s-done').style.display='block';
   document.getElementById('done-arn').textContent='AA33'+Date.now().toString().slice(-10);
   document.getElementById('done-date').textContent=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('done-govt').textContent='₹'+netGST.toFixed(2);
+  document.getElementById('done-govt').textContent='₹'+netGST.toFixed(2)+' paid to Govt';
   btn.innerHTML='🚀 File GST Return Now';btn.disabled=false;
-  window.scrollTo(0,0);
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function resetFiling(){['gstin','mobile','b2b-val','b2c-val','nil-val','itc-c','itc-s','gst-otp'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('confirm-chk').checked=false;document.getElementById('govt-chk').checked=false;document.getElementById('gstin-ok').style.display='none';netGST=0;updateSum();document.getElementById('s-done').style.display='none';goStep(1);document.getElementById('s1').style.display='block';}
+function resetFiling(){
+  ['gstin','mobile','b2b-val','b2c-val','nil-val','itc-c','itc-s','gst-otp'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('confirm-chk').checked=false;
+  document.getElementById('govt-chk').checked=false;
+  document.getElementById('gstin-ok').style.display='none';
+  netGST=0;paymentDone=false;updateSum();
+  document.getElementById('s-done').style.display='none';
+  goStep(1);document.getElementById('s1').style.display='block';
+}
 
+// CALCULATOR
 function setR(r,el){gstRate=r;document.querySelectorAll('.rchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');calcGST();}
-function calcGST(){const amt=parseFloat(document.getElementById('c-amt').value)||0;const type=document.getElementById('c-type').value;let base,gst,total;if(type==='ex'){base=amt;gst=base*gstRate/100;total=base+gst;}else{total=amt;base=total/(1+gstRate/100);gst=total-base;}const f=v=>'₹'+v.toFixed(2);document.getElementById('r-base').textContent=f(base);document.getElementById('r-cgst').textContent=f(gst/2);document.getElementById('r-sgst').textContent=f(gst/2);document.getElementById('r-igst').textContent=f(gst);document.getElementById('r-total').textContent=f(total);document.getElementById('r-cr').textContent=gstRate/2;document.getElementById('r-sr').textContent=gstRate/2;document.getElementById('r-ir').textContent=gstRate;}
+function calcGST(){
+  const amt=parseFloat(document.getElementById('c-amt').value)||0;
+  const type=document.getElementById('c-type').value;
+  let base,gst,total;
+  if(type==='ex'){base=amt;gst=base*gstRate/100;total=base+gst;}
+  else{total=amt;base=total/(1+gstRate/100);gst=total-base;}
+  const f=v=>'₹'+v.toFixed(2);
+  document.getElementById('r-base').textContent=f(base);
+  document.getElementById('r-cgst').textContent=f(gst/2);
+  document.getElementById('r-sgst').textContent=f(gst/2);
+  document.getElementById('r-igst').textContent=f(gst);
+  document.getElementById('r-total').textContent=f(total);
+  document.getElementById('r-cr').textContent=gstRate/2;
+  document.getElementById('r-sr').textContent=gstRate/2;
+  document.getElementById('r-ir').textContent=gstRate;
+}
 
-async function loadFilings(){const m=document.getElementById('track-mob').value.trim();if(m.length!==10){alert('Enter valid 10-digit mobile number');return;}document.getElementById('track-res').innerHTML='<div class="alert a-info">⏳ <div>Loading...</div></div>';try{const r=await fetch(`${API}/filings/${m}`);const d=await r.json();document.getElementById('track-sum').style.display='block';document.getElementById('t-total').textContent=d.filingCount||0;document.getElementById('t-free').textContent=d.isFreeFilingAvailable?'FREE':'₹'+FEE;let tax=0;(d.filings||[]).forEach(f=>tax+=f.totalTax||0);document.getElementById('t-tax').textContent='₹'+(tax/1000).toFixed(1)+'K';if(!d.filings||!d.filings.length){document.getElementById('track-res').innerHTML='<div class="alert a-info">ℹ️ <div>No filings found.</div></div>';return;}document.getElementById('track-res').innerHTML=d.filings.map(f=>`<div class="card" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><div><div style="font-weight:700;font-size:15px">${f.returnType}</div><div style="font-size:12px;color:var(--t2)">ARN: ${f.arn}</div></div><span class="tag t-ok">✅ Filed</span></div><div style="font-size:12px;color:var(--t2)">Tax Paid to Govt: ₹${f.totalTax} · Date: ${new Date(f.filedAt).toLocaleDateString('en-IN')}</div></div>`).join('');}catch{document.getElementById('track-res').innerHTML='<div class="alert a-warn">⚠️ <div>Backend not running. Start server: <strong>node server.js</strong></div></div>';}}
+// TRACK
+async function loadFilings(){
+  const m=document.getElementById('track-mob').value.trim();
+  if(m.length!==10){alert('Enter valid 10-digit mobile');return;}
+  document.getElementById('track-res').innerHTML='<div class="alert a-info">⏳ <div>Loading...</div></div>';
+  try{
+    const r=await fetch(`${API}/filings/${m}`);const d=await r.json();
+    document.getElementById('track-sum').style.display='block';
+    document.getElementById('t-total').textContent=d.filingCount||0;
+    document.getElementById('t-free').textContent=d.isFreeFilingAvailable?'FREE':'₹'+FEE;
+    let tax=0;(d.filings||[]).forEach(f=>tax+=f.totalTax||0);
+    document.getElementById('t-tax').textContent='₹'+(tax/1000).toFixed(1)+'K';
+    if(!d.filings||!d.filings.length){document.getElementById('track-res').innerHTML='<div class="alert a-info">ℹ️ <div>No filings found.</div></div>';return;}
+    document.getElementById('track-res').innerHTML=d.filings.map(f=>`<div class="card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><div><div style="font-weight:700;font-size:15px;font-family:'Sora',sans-serif">${f.returnType}</div><div style="font-size:12px;color:var(--t2)">ARN: ${f.arn}</div></div><span class="tag t-ok">✅ Filed</span></div><div style="font-size:12px;color:var(--t2)">Tax: ₹${f.totalTax} · ${new Date(f.filedAt).toLocaleDateString('en-IN')}</div></div>`).join('');
+  }catch{
+    document.getElementById('track-res').innerHTML='<div class="alert a-warn">⚠️ <div>Start backend: <strong>node server.js</strong></div></div>';
+  }
+}
 
+// LEARN
 const LD={
-  what:{t:'🤔 What is GST?',b:'<p><strong>GST = Goods and Services Tax</strong></p><br><p>Before 2017, India had many confusing taxes — VAT, Service Tax, Excise Duty, etc. Very complicated!</p><br><p>From <strong>July 2017</strong>, India replaced ALL of them with ONE single tax — GST. Much simpler!</p><br><p><strong>3 types of GST:</strong><br>• <strong>CGST</strong> — goes to Central Government<br>• <strong>SGST</strong> — goes to State Government<br>• <strong>IGST</strong> — when selling to another state</p><br><p><strong>Who must register?</strong><br>Any business with sales above ₹40 lakhs/year (₹20 lakhs for service businesses).</p>'},
-  reg:{t:'📝 How to Register for GST',b:'<p><strong>Step 1:</strong> Go to <strong>gst.gov.in</strong><br>Click: Services → Registration → New Registration</p><br><p><strong>Step 2:</strong> Fill your details<br>PAN, email, mobile, business name</p><br><p><strong>Step 3:</strong> Upload documents<br>• Aadhaar card • PAN card • Bank statement • Address proof</p><br><p><strong>Step 4:</strong> Verify OTP → Submit</p><br><p><strong>Step 5:</strong> Get GSTIN in 3-7 days</p><br><p style="color:var(--ok)">✅ Registration is completely FREE!</p>'},
-  pay:{t:'🏛️ How to Pay GST to Government',b:'<p><strong>Step 1:</strong> Go to <strong>gst.gov.in</strong> → Login</p><br><p><strong>Step 2:</strong> Services → Payments → Create Challan</p><br><p><strong>Step 3:</strong> Enter the tax amount (shown in GSTMitra)</p><br><p><strong>Step 4:</strong> Pay via:<br>• UPI (Google Pay, PhonePe)<br>• Net Banking<br>• Debit/Credit Card</p><br><p><strong>Step 5:</strong> Save the CIN number (payment receipt)</p><br><p><strong>Step 6:</strong> Come back to GSTMitra → toggle "Paid" → file your return</p><br><p style="color:var(--ok)">✅ Money goes directly to Government. GSTMitra only collects ₹199 service fee.</p>'},
-  returns:{t:'📋 Types of GST Returns',b:'<p><strong>GSTR-1</strong><br>All your sales details<br>Due: 11th of every month</p><br><p><strong>GSTR-3B</strong><br>Summary + pay your GST tax<br>Due: 20th of every month<br><em>Most businesses file this every month</em></p><br><p><strong>GSTR-4</strong><br>For Composition scheme small businesses<br>Due: 30th April</p><br><p><strong>GSTR-9</strong><br>Annual return<br>Due: 31st December</p><br><p style="color:#92400e">⚠️ Missing a return = ₹50 per day penalty</p>'},
-  itc:{t:'💰 Input Tax Credit (ITC)',b:'<p>ITC = GST you paid on purchases can be <strong>deducted</strong> from GST you collected on sales.</p><br><p><strong>Simple Example:</strong><br>GST paid on your purchases: ₹1,000<br>GST collected from your sales: ₹1,800<br>You pay government: <strong>₹800 only</strong> (1800 - 1000)</p><br><p><strong>To claim ITC you need:</strong><br>• GST invoice from supplier<br>• Supplier must have filed their return<br>• Goods must be for business use only</p><br><p style="color:var(--ok)">✅ ITC can save thousands of rupees every month!</p>'},
-  penalty:{t:'⚠️ Late Filing Penalties',b:'<p><strong>GSTR-3B late fee:</strong> ₹50 per day</p><p><strong>Nil return late fee:</strong> ₹20 per day</p><p><strong>Maximum penalty:</strong> ₹10,000 per return</p><br><p><strong>Interest on unpaid tax:</strong> 18% per year</p><br><p style="color:var(--err)">❌ Missing 6 returns = GST registration CANCELLED</p><br><p style="color:var(--ok)">✅ GSTMitra sends reminders before due dates!</p>'},
-  eway:{t:'🚛 E-Way Bill',b:'<p><strong>What?</strong> Digital document for transporting goods worth &gt; ₹50,000</p><br><p><strong>Generate at:</strong> ewaybillgst.gov.in</p><br><p><strong>Need:</strong> Invoice details + vehicle number</p><br><p><strong>Validity:</strong> 1 day per 200 km</p><br><p style="color:var(--err)">❌ No E-Way Bill = penalty of 200% of tax or ₹10,000 (whichever higher)</p>'}
+  what:{t:'🤔 What is GST?',b:'<p><strong>GST = Goods and Services Tax</strong></p><br><p>Before 2017, India had many confusing taxes — VAT, Service Tax, Excise Duty. From July 2017, India replaced ALL of them with ONE single tax — GST.</p><br><p><strong>3 types:</strong><br>• <strong>CGST</strong> — Central Government<br>• <strong>SGST</strong> — State Government<br>• <strong>IGST</strong> — Interstate sales</p><br><p><strong>Who must register?</strong> Any business with sales above ₹40 lakhs/year.</p>'},
+  reg:{t:'📝 How to Register for GST',b:'<p><strong>Step 1:</strong> Go to <strong>gst.gov.in</strong> → Services → Registration → New Registration</p><br><p><strong>Step 2:</strong> Fill PAN, email, mobile, business name</p><br><p><strong>Step 3:</strong> Upload Aadhaar, PAN, bank statement, address proof</p><br><p><strong>Step 4:</strong> Verify OTP → Submit</p><br><p><strong>Step 5:</strong> Get GSTIN in 3-7 days</p><br><p style="color:var(--ok)">✅ Registration is completely FREE!</p>'},
+  pay:{t:'🏛️ How to Pay GST to Government',b:'<p><strong>Step 1:</strong> Go to <strong>gst.gov.in</strong> → Login with GSTIN</p><br><p><strong>Step 2:</strong> Services → Payments → Create Challan</p><br><p><strong>Step 3:</strong> Enter the tax amount (shown in GSTMitra)</p><br><p><strong>Step 4:</strong> Pay via UPI (GPay/PhonePe) / Net Banking / Card</p><br><p><strong>Step 5:</strong> Save the CIN number (payment receipt)</p><br><p><strong>Step 6:</strong> Come back to GSTMitra → toggle "Paid" → file!</p><br><p style="color:var(--ok)">✅ Money goes directly to Government. GSTMitra only collects ₹199 service fee separately.</p>'},
+  returns:{t:'📋 Types of GST Returns',b:'<p><strong>GSTR-1</strong> — All sales details · Due 11th monthly</p><br><p><strong>GSTR-3B</strong> — Summary + pay tax · Due 20th monthly<br><em>Most businesses file this every month</em></p><br><p><strong>GSTR-4</strong> — Composition dealers · Due 30 April</p><br><p><strong>GSTR-9</strong> — Annual return · Due 31 December</p><br><p style="color:#92400e">⚠️ Missing = ₹50 per day penalty</p>'},
+  itc:{t:'💰 Input Tax Credit (ITC)',b:'<p>GST you paid on purchases can be <strong>deducted</strong> from GST collected on sales!</p><br><p><strong>Example:</strong><br>GST paid on purchases: ₹1,000<br>GST collected from sales: ₹1,800<br>Pay Government: <strong>₹800 only!</strong></p><br><p><strong>To claim ITC:</strong><br>• GST invoice from supplier<br>• Supplier must have filed their return<br>• Goods for business use only</p><br><p style="color:var(--ok)">✅ ITC saves thousands every month!</p>'},
+  penalty:{t:'⚠️ Late Filing Penalties',b:'<p><strong>GSTR-3B late:</strong> ₹50 per day</p><p><strong>Nil return late:</strong> ₹20 per day</p><p><strong>Maximum:</strong> ₹10,000 per return</p><br><p><strong>Interest:</strong> 18% per year on unpaid tax</p><br><p style="color:var(--err)">❌ Missing 6 returns = GST registration CANCELLED</p><br><p style="color:var(--ok)">✅ GSTMitra reminds you before due dates!</p>'},
+  eway:{t:'🚛 E-Way Bill',b:'<p>Required when transporting goods worth more than ₹50,000.</p><br><p><strong>Generate at:</strong> ewaybillgst.gov.in</p><br><p><strong>Need:</strong> Invoice details + vehicle number</p><br><p><strong>Valid:</strong> 1 day per 200 km</p><br><p style="color:var(--err)">❌ No E-Way Bill = 200% of tax penalty or ₹10,000</p>'}
 };
 
 function openLearn(k){const d=LD[k];document.getElementById('modal-title').textContent=d.t;document.getElementById('modal-body').innerHTML=d.b;document.getElementById('modal').style.display='flex';}
 function closeModal(e){if(e.target===document.getElementById('modal'))document.getElementById('modal').style.display='none';}
-function openHelp(){alert('💬 GSTMitra Support\n\n📱 WhatsApp: +91-XXXXXXXXXX\n📧 support@gstmitra.in\n🕐 Mon-Sat 9am–6pm\n\nSandbox OTP: 575757\nTest GSTIN: 33AAGCB1286Q1ZB');}
+function showHelp(){alert('💬 GSTMitra Support\n\n📱 WhatsApp: +91-XXXXXXXXXX\n📧 support@gstmitra.in\n🕐 Mon-Sat 9am–6pm\n\n🧪 Sandbox OTP: 575757\n🔑 Test GSTIN: 33AAGCB1286Q1ZB\n💳 Razorpay: TEST MODE ✅');}
+
+// Fix lang-btn onclick detection
+document.querySelectorAll('.lang-btn').forEach((btn,i)=>{
+  const langs=['en','hi','kn','ta','te','mr','gu','bn','pa','ml','or'];
+  btn.onclick=()=>setLang(langs[i]);
+});
 
 calcGST();
 </script>
